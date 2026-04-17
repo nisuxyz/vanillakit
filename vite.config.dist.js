@@ -3,10 +3,13 @@ import { compression, defineAlgorithm } from "vite-plugin-compression2";
 import * as zlib from "zlib";
 
 export default defineConfig({
-  root: "demo",
-  base: "./",
   build: {
-    outDir: "../docs",
+    lib: {
+      entry: "src/index.js",
+      formats: ["es"],
+      fileName: "vanillakit",
+    },
+    outDir: "dist",
     emptyOutDir: true,
     target: "esnext",
     minify: "terser",
@@ -16,26 +19,12 @@ export default defineConfig({
         pure_getters: true,
         unsafe_arrows: true,
         unsafe_methods: true,
-        drop_console: true,
-        drop_debugger: true,
       },
-      mangle: {
-        properties: {
-          regex: /^_/, // mangle private _-prefixed properties
-        },
-      },
+      mangle: true,
       format: {
         comments: false,
       },
     },
-    cssMinify: "lightningcss",
-    rollupOptions: {
-      treeshake: {
-        moduleSideEffects: true,
-        propertyReadSideEffects: false,
-      },
-    },
-    reportCompressedSize: true,
   },
   plugins: [
     compression({

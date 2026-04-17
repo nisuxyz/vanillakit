@@ -5,16 +5,20 @@ import {
   pageClass, headingClass, subtitleClass,
 } from "./styles.ts";
 import { HomePage } from "./pages/home.ts";
+import { TasksPage } from "./pages/tasks.ts";
 import { ListStressPage } from "./pages/stress.ts";
 import { PlaygroundPage } from "./pages/playground.ts";
 import { AboutPage } from "./pages/about.ts";
 import { DocsPage } from "./pages/docs.ts";
+import { IntegrationsPage } from "./pages/integrations.ts";
 
 const RouterView = createRouter({
   "/": HomePage,
+  "/tasks": TasksPage,
   "/stress": ListStressPage,
   "/playground": PlaygroundPage,
   "/docs": DocsPage,
+  "/integrations": IntegrationsPage,
   "/about": AboutPage,
   "*": () =>
     html`<div class=${pageClass}>
@@ -28,10 +32,12 @@ export function App() {
     <header class=${headerClass}>
       <span class=${logoClass}>vanillakit_</span>
       <nav class=${navClass}>
-        ${navLink("/", "Tasks", navLinkActive, navLinkBase)}
-        ${navLink("/stress", "List Stress", navLinkActive, navLinkBase)}
-        ${navLink("/playground", "Playground", navLinkActive, navLinkBase)}
+        ${navLink("/", "Home", navLinkActive, navLinkBase)}
         ${navLink("/docs", "Docs", navLinkActive, navLinkBase)}
+        ${navLink("/tasks", "Tasks", navLinkActive, navLinkBase)}
+        ${navLink("/playground", "Playground", navLinkActive, navLinkBase)}
+        ${navLink("/stress", "Stress", navLinkActive, navLinkBase)}
+        ${navLink("/integrations", "Integrations", navLinkActive, navLinkBase)}
         ${navLink("/about", "About", navLinkActive, navLinkBase)}
       </nav>
     </header>

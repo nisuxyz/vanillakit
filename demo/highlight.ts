@@ -4,6 +4,7 @@ import "prismjs/components/prism-typescript";
 import "prismjs/components/prism-css";
 import "prismjs/components/prism-markup";
 import "prismjs/components/prism-bash";
+import "prismjs/components/prism-python";
 import { html } from "../src/index.js";
 import { globalCss } from "../src/index.js";
 import { sourceBlock } from "./styles.ts";

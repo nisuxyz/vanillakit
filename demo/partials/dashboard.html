@@ -1,0 +1,10 @@
+<div class="server-row">
+  <strong>Dashboard</strong> — loaded via htmx from /partials/dashboard.html
+</div>
+<div class="server-row">User: <em>Ada Lovelace</em> | Role: Admin</div>
+<div class="server-row">Last login: <span id="login-time"></span></div>
+<div data-vanillakit="counter"></div>
+<script>
+  document.getElementById("login-time").textContent =
+    new Date().toLocaleTimeString();
+</script>
