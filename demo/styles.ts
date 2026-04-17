@@ -211,3 +211,73 @@ export const codeBlock = css`
     font-weight: 500;
   }
 `;
+export const sourceBlock = css`
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  background: var(--surface-2);
+  padding: 16px;
+  border-radius: 0 0 8px 8px;
+  border: 1px solid var(--border);
+  border-top: none;
+  white-space: pre;
+  overflow-x: auto;
+  line-height: 1.7;
+  color: var(--text-muted);
+  max-height: 400px;
+  overflow-y: auto;
+`;
+export const detailsSummary = css`
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
+  margin-top: 16px;
+  &:hover {
+    color: var(--text);
+    border-color: var(--text-muted);
+  }
+  &::marker {
+    color: var(--accent);
+  }
+`;
+export const docSectionClass = css`
+  margin-bottom: 36px;
+  & h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-family: var(--mono);
+    color: var(--accent);
+  }
+  & h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 16px 0 6px;
+    font-family: var(--mono);
+  }
+  & p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+  & code {
+    font-family: var(--mono);
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.85em;
+  }
+  & hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+`;

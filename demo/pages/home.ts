@@ -4,7 +4,9 @@ import {
   pageClass, headingClass, subtitleClass,
   btnBase, btnPrimary, btnDanger,
   inputClass, selectClass, badgeClass,
+  detailsSummary,
 } from "../styles.ts";
+import { code } from "../highlight.ts";
 
 const checkboxClass = css`
   appearance: none;
@@ -290,5 +292,48 @@ export function HomePage() {
             </div>`
         : null}
     </div>
+    <details>
+      <summary class=${detailsSummary}>View source — signals, computed, each()</summary>
+      ${code(`// Reactive state
+const todos = signal([...]);
+const filter = signal("all");
+const filteredTodos = computed(() => {
+  const f = filter();
+  const l = todos();
+  return f === "active" ? l.filter(t => !t.done)
+       : f === "done"   ? l.filter(t => t.done)
+       : l;
+});
+const stats = computed(() => {
+  const l = todos();
+  return {
+    total: l.length,
+    done: l.filter(t => t.done).length,
+    active: l.filter(t => !t.done).length,
+  };
+});
+
+// Keyed list rendering — DOM nodes reused by id
+html\`<div>
+  \${each(filteredTodos, t => t.id, (itemSig) => TodoItem(itemSig))}
+</div>\`;
+
+// Adding a todo — just push to the signal
+function add() {
+  todos(l => [...l, { id: nextId++, text: text().trim(), done: false, priority: priority() }]);
+}
+
+// TodoItem reads from itemSig — updates when that item changes
+function TodoItem(itemSig) {
+  const todo = itemSig();
+  const toggle = () => todos(l => l.map(t =>
+    t.id === todo.id ? { ...t, done: !t.done } : t
+  ));
+  return html\`<div>
+    <input type="checkbox" checked=\${todo.done} onclick=\${toggle} />
+    <span>\${todo.text}</span>
+  </div>\`;
+}`)}
+    </details>
   </div>`;
 }

@@ -4,7 +4,9 @@ import {
   pageClass, headingClass, subtitleClass,
   btnBase, btnPrimary, btnGhost, btnDanger, btnInfo, btnSuccess,
   inputClass, badgeClass,
+  detailsSummary,
 } from "../styles.ts";
+import { code } from "../highlight.ts";
 
 const stressItemClass = css`
   display: flex;
@@ -262,5 +264,32 @@ export function ListStressPage() {
         ? "No operations yet…"
         : stressLog().join("\n")}
     </div>
+    <details>
+      <summary class=${detailsSummary}>View source — each() keyed reconciliation</summary>
+      ${code(`// each() reuses DOM nodes by key across mutations
+const items = signal(Array.from({ length: 8 }, randItem));
+
+// Render — each item gets a Signal<T> and ReadonlySignal<number>
+html\`<div>
+  \${each(items, item => item.id, (itemSig, indexSig) =>
+    html\`<div>
+      <span>\${() => indexSig()}</span>
+      <span>\${() => itemSig().name}</span>
+      <span>\${() => itemSig().score}</span>
+      <input placeholder="type here…" />
+    </div>\`
+  )}
+</div>\`;
+
+// Mutations — DOM nodes with matching keys are reused, not recreated.
+// Text typed into inputs persists across shuffle/reverse/sort.
+items(shuffle);                              // reorder
+items(l => [...l].reverse());                // reverse
+items(l => [...l, randItem()]);              // append
+items(l => l.filter(x => x.id !== target));  // remove
+items(l => [...l].sort((a, b) =>             // sort
+  a.name.localeCompare(b.name)
+));`)}
+    </details>
   </div>`;
 }

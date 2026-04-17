@@ -3,7 +3,9 @@ import {
   pageClass, headingClass, subtitleClass, cardClass, codeBlock, monoSmall,
   btnBase, btnPrimary, btnGhost, btnDanger, btnSuccess,
   inputClass, selectClass,
+  detailsSummary,
 } from "../styles.ts";
+import { code } from "../highlight.ts";
 
 export function PlaygroundPage() {
   // ---- Deeply nested reactive object ----
@@ -696,5 +698,43 @@ export function PlaygroundPage() {
       <div class="item">Fourth item (dimmed — :nth-child(even))</div>
       <div class="item">Fifth item (green — :last-child)</div>
     </div>
+    <details>
+      <summary class=${detailsSummary}>View source — reactive(), css\`\`, cx()</summary>
+      ${code(`// Deep reactive proxy — mutate normally, changes propagate
+const state = reactive({
+  user: {
+    name: "Ada Lovelace",
+    settings: {
+      theme: "dark",
+      notifications: { email: true, push: false, frequency: "daily" },
+    },
+    scores: [95, 87, 92],
+  },
+});
+
+// Computed snapshot for display — auto-updates
+const jsonView = computed(() => JSON.stringify(snapshot(state), null, 2));
+
+// Direct mutation triggers effects
+state.user.name = "Grace Hopper";
+state.user.scores.push(99);
+
+// Scoped CSS with nesting, pseudo-classes, @media
+const card = css\`
+  padding: 20px;
+  border: 2px solid var(--border);
+  &:hover { border-color: var(--accent); }
+  & > .title { font-weight: 700; }
+  @media (max-width: 600px) { padding: 12px; }
+\`;
+
+// cx() merges class names, skipping falsy values
+const classes = cx(
+  statusBase,
+  statusMap[status()],
+  rounded() && propRounded,
+  shadow() && propShadow,
+);`)}
+    </details>
   </div>`;
 }

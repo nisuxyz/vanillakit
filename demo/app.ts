@@ -8,11 +8,13 @@ import { HomePage } from "./pages/home.ts";
 import { ListStressPage } from "./pages/stress.ts";
 import { PlaygroundPage } from "./pages/playground.ts";
 import { AboutPage } from "./pages/about.ts";
+import { DocsPage } from "./pages/docs.ts";
 
 const RouterView = createRouter({
   "/": HomePage,
   "/stress": ListStressPage,
   "/playground": PlaygroundPage,
+  "/docs": DocsPage,
   "/about": AboutPage,
   "*": () =>
     html`<div class=${pageClass}>
@@ -29,6 +31,7 @@ export function App() {
         ${navLink("/", "Tasks", navLinkActive, navLinkBase)}
         ${navLink("/stress", "List Stress", navLinkActive, navLinkBase)}
         ${navLink("/playground", "Playground", navLinkActive, navLinkBase)}
+        ${navLink("/docs", "Docs", navLinkActive, navLinkBase)}
         ${navLink("/about", "About", navLinkActive, navLinkBase)}
       </nav>
     </header>
