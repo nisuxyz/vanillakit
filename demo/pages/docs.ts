@@ -22,7 +22,17 @@ export function DocsPage() {
       </p>
 
       <h3>Install</h3>
-      ${code(`npm install vanillakit`, "bash")}
+      <p>Grab the source from GitHub directly, or use a CDN like jsDelivr or esm.sh:</p>
+      ${code(`# clone the repo
+git clone https://github.com/nisuxyz/vanillakit.git
+cp -r vanillakit/src ./vanillakit`, "bash")}
+
+      <p>Or import straight from a CDN — no install needed:</p>
+      ${code(`<script type="module">
+  import { signal, html, css } from "https://esm.sh/gh/nisuxyz/vanillakit/src/index.js";
+
+  // ready to go
+</script>`, "markup")}
 
       <h3>Quick setup</h3>
       <p>Create an <code>index.html</code> and a module entry point:</p>
@@ -34,8 +44,10 @@ export function DocsPage() {
   </body>
 </html>`, "markup")}
 
-      ${code(`// app.js
-import { signal, html, css, globalCss } from "vanillakit";
+      ${code(`// app.js — if using local copy:
+import { signal, html, css, globalCss } from "./vanillakit/index.js";
+// or from CDN:
+// import { signal, html, css, globalCss } from "https://esm.sh/gh/nisuxyz/vanillakit/src/index.js";
 
 globalCss\`
   body { margin: 0; font-family: system-ui; background: #111; color: #eee; }
