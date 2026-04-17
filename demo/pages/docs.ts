@@ -78,6 +78,83 @@ document.getElementById("app").append(app);`)}
       <hr />
     </div>
 
+    <!-- TypeScript & Tooling -->
+    <div class=${docSectionClass}>
+      <h2>TypeScript &amp; Tooling</h2>
+
+      <h3>TypeScript</h3>
+      <p>
+        The source is plain JS with JSDoc type annotations, so it works out of the box
+        with TypeScript — no <code>@types</code> package needed. Import the types directly:
+      </p>
+      ${code(`import { signal } from "vanillakit";
+import type { Signal, ReadonlySignal } from "vanillakit/signal.js";
+
+const count: Signal<number> = signal(0);`, "typescript")}
+
+      <p>
+        If you're writing <code>.ts</code> files, make sure your <code>tsconfig.json</code>
+        has <code>"moduleResolution": "bundler"</code> and
+        <code>"allowImportingTsExtensions": true</code> (already the default with Vite).
+      </p>
+      ${code(`{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
+  }
+}`, "javascript")}
+
+      <h3>HMR with Vite</h3>
+      <p>
+        vanillakit works with Vite's HMR out of the box. Since state lives in module-level
+        signals, hot-updated modules keep their reactive graph intact — the DOM updates in
+        place without a full reload.
+      </p>
+      <p>
+        A minimal <code>vite.config.js</code>:
+      </p>
+      ${code(`import { defineConfig } from "vite";
+
+export default defineConfig({
+  root: "demo",     // folder with your index.html
+  base: "./",       // relative paths (important for GitHub Pages)
+});`)}
+
+      <p>
+        Run <code>npx vite</code> (or <code>bun run dev</code>) and edits to your templates,
+        styles, and signals will hot-swap instantly. CSS changes via <code>css\`\`</code>
+        trigger full reloads since styles are injected via <code>CSSStyleSheet</code> at
+        module evaluation time — this is fast enough to feel instant in practice.
+      </p>
+
+      <h3>Type checking</h3>
+      <p>
+        Run <code>tsc --noEmit</code> to type-check without emitting files. The <code>checkJs</code>
+        flag ensures the JSDoc-typed source files are validated too.
+      </p>
+      ${code(`# type-check everything
+npx tsc --noEmit
+
+# or add a script to package.json
+# "check": "tsc --noEmit"`, "bash")}
+
+      <h3>Production builds</h3>
+      <p>
+        <code>vite build</code> produces a single minified JS bundle. The entire library
+        plus a full demo app compiles to ~25 KB gzipped.
+      </p>
+      ${code(`npx vite build
+# output in dist/ (or wherever outDir points)`, "bash")}
+      <hr />
+    </div>
+
     <!-- Examples -->
     <div class=${docSectionClass}>
       <h2>Examples</h2>

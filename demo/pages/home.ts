@@ -257,7 +257,7 @@ export function HomePage() {
   return html`<div class=${pageClass}>
     <h1 class=${headingClass}>Tasks</h1>
     <p class=${subtitleClass}>
-      A fully reactive todo app — zero frameworks, zero build tools.
+      A fully reactive todo app — zero frameworks, zero build tools required<a href="#/docs">*</a>.
     </p>
     <div class=${statsGridClass}>
       <div class=${statBoxClass}>
