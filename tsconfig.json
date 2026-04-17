@@ -17,6 +17,6 @@
   },
   "include": [
     "src/**/*.js",
-    "demo/**/*.ts"
+    "docs/**/*.ts"
   ]
 }
