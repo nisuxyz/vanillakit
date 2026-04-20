@@ -1,18 +1,6 @@
-import { html, css, cx } from "../../src/index.js";
-import {
-  pageClass, headingClass, subtitleClass, cardClass,
-} from "../styles.ts";
+import { html, css } from "../../src/index.js";
+import { subtitleClass } from "../styles.ts";
 
-const moduleCardClass = css`
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 20px;
-  margin-bottom: 10px;
-`;
 const moduleIcon = css`
   width: 40px;
   height: 40px;
@@ -23,33 +11,12 @@ const moduleIcon = css`
   font-size: 1.1rem;
   flex-shrink: 0;
 `;
-const moduleInfo = css`
-  flex: 1;
-  strong {
-    display: block;
-    font-family: var(--mono);
-    font-size: 0.9rem;
-    margin-bottom: 2px;
-  }
-  span {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-  }
-`;
-const moduleSizeClass = css`
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  background: var(--surface-2);
-  padding: 3px 10px;
-  border-radius: 20px;
-`;
 
 const modules = [
   {
     name: "signal.js",
     icon: "⚡",
-    color: "var(--accent)",
+    color: "var(--vk-color-accent)",
     lines: "~90",
     desc: "signal, computed, effect, batch, untrack",
   },
@@ -70,7 +37,7 @@ const modules = [
   {
     name: "component.js",
     icon: "📦",
-    color: "var(--success)",
+    color: "var(--vk-color-success)",
     lines: "~95",
     desc: "mount, onMount, onCleanup, provide/inject",
   },
@@ -91,59 +58,48 @@ const modules = [
 ];
 
 export function AboutPage() {
-  return html`<div class=${pageClass}>
-    <h1 class=${headingClass}>Architecture</h1>
+  return html`<div class="animate-in">
+    <h1>Architecture</h1>
     <p class=${subtitleClass}>
       Six standalone modules. ~760 lines total. Zero dependencies.
     </p>
-    <div class=${cardClass}>
-      <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:8px;">
-        Design Principles
-      </h3>
-      <div
-        style="color:var(--text-muted);font-size:0.88rem;line-height:1.8;"
-      >
-        <p style="margin-bottom:8px;">
-          → Functions are components. No classes, no magic strings.
-        </p>
-        <p style="margin-bottom:8px;">
-          →
-          <code
-            style="font-family:var(--mono);background:var(--surface-2);padding:2px 6px;border-radius:4px;"
-            >() =></code
-          >
-          means reactive. Everything else is static. That's the only rule.
-        </p>
-        <p style="margin-bottom:8px;">
-          → Fine-grained updates. Each reactive expression updates exactly
-          one DOM node.
-        </p>
-        <p>
-          → Modules are independent. Only
-          <code
-            style="font-family:var(--mono);background:var(--surface-2);padding:2px 6px;border-radius:4px;"
-            >signal.js</code
-          >
-          is shared.
-        </p>
-      </div>
-    </div>
+    <article>
+      <h3>Design Principles</h3>
+      <ul>
+        <li>Functions are components. No classes, no magic strings.</li>
+        <li>
+          <code>() =></code> means reactive. Everything else is static. That's
+          the only rule.
+        </li>
+        <li>
+          Fine-grained updates. Each reactive expression updates exactly one DOM
+          node.
+        </li>
+        <li>Modules are independent. Only <code>signal.js</code> is shared.</li>
+      </ul>
+    </article>
     <div>
       ${modules.map(
-    (m) =>
-      html`<div class=${moduleCardClass}>
+        (m) =>
+          html`<article
+            data-card
+            style="display:flex;align-items:center;gap:16px;margin-bottom:10px;"
+          >
             <div
               class=${moduleIcon}
               style=${`background: ${m.color}20; color: ${m.color};`}
             >
               ${m.icon}
             </div>
-            <div class=${moduleInfo}>
-              <strong>${m.name}</strong><span>${m.desc}</span>
+            <div style="flex:1;">
+              <strong style="font-family:var(--vk-font-mono);font-size:0.9rem;"
+                >${m.name}</strong
+              >
+              <small>${m.desc}</small>
             </div>
-            <span class=${moduleSizeClass}>${m.lines}</span>
-          </div>`,
-  )}
+            <span data-badge>${m.lines}</span>
+          </article>`,
+      )}
     </div>
   </div>`;
 }

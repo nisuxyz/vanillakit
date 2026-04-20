@@ -1,13 +1,32 @@
-import { signal, computed, reactive, snapshot, html, css, cx } from "../../src/index.js";
 import {
-  pageClass, headingClass, subtitleClass, cardClass, codeBlock, monoSmall,
-  btnBase, btnPrimary, btnGhost, btnDanger, btnSuccess,
-  inputClass, selectClass,
-  detailsSummary,
-} from "../styles.ts";
+  signal,
+  computed,
+  reactive,
+  snapshot,
+  html,
+  css,
+  cx,
+} from "../../src/index.js";
+import { subtitleClass } from "../styles.ts";
 import { code } from "../highlight.ts";
 
-export function PlaygroundPage() {
+const codeBlock = css`
+  font-family: var(--vk-font-mono);
+  font-size: 0.82rem;
+  background: var(--vk-color-surface-2);
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--vk-color-border);
+  white-space: pre-wrap;
+  line-height: 1.7;
+  color: var(--vk-color-text-muted);
+  strong {
+    color: var(--vk-color-accent);
+    font-weight: 500;
+  }
+`;
+
+export function PlaygroundSection() {
   // ---- Deeply nested reactive object ----
   const state = reactive({
     user: {
@@ -29,23 +48,23 @@ export function PlaygroundPage() {
   // ---- CSS stress test styles ----
   const cssStressClass = css`
     padding: 20px;
-    border: 2px solid var(--border);
-    border-radius: var(--radius);
+    border: 2px solid var(--vk-color-border);
+    border-radius: var(--vk-radius-md);
     margin-bottom: 16px;
 
     &:hover {
-      border-color: var(--accent);
+      border-color: var(--vk-color-accent);
     }
 
     & > .title {
       font-weight: 700;
       font-size: 1rem;
       margin-bottom: 12px;
-      color: var(--accent);
+      color: var(--vk-color-accent);
     }
 
     & .nested-box {
-      background: var(--surface-2);
+      background: var(--vk-color-surface-2);
       padding: 12px;
       border-radius: 6px;
       margin-bottom: 8px;
@@ -53,13 +72,13 @@ export function PlaygroundPage() {
 
     & .nested-box > .inner {
       font-size: 0.85rem;
-      color: var(--text-muted);
+      color: var(--vk-color-text-muted);
     }
 
     &::before {
       content: "✦";
       margin-right: 8px;
-      color: var(--accent);
+      color: var(--vk-color-accent);
     }
 
     & .tag {
@@ -71,18 +90,18 @@ export function PlaygroundPage() {
     }
 
     & .tag.green {
-      background: var(--success-dim);
-      color: var(--success);
+      background: var(--vk-color-success-dim);
+      color: var(--vk-color-success);
     }
 
     & .tag.yellow {
-      background: var(--accent-dim);
-      color: var(--accent);
+      background: var(--vk-color-accent-dim);
+      color: var(--vk-color-accent);
     }
 
     &:hover,
     &:focus-within {
-      box-shadow: 0 0 0 2px var(--accent-dim);
+      box-shadow: 0 0 0 2px var(--vk-color-accent-dim);
     }
 
     @media (max-width: 600px) {
@@ -98,19 +117,19 @@ export function PlaygroundPage() {
     padding: 16px;
 
     & .level1 {
-      border-left: 3px solid var(--danger);
+      border-left: 3px solid var(--vk-color-danger);
       padding-left: 12px;
       margin-bottom: 8px;
 
       & .level2 {
-        border-left: 3px solid var(--accent);
+        border-left: 3px solid var(--vk-color-accent);
         padding-left: 12px;
         margin-bottom: 8px;
 
         & .level3 {
-          border-left: 3px solid var(--success);
+          border-left: 3px solid var(--vk-color-success);
           padding-left: 12px;
-          font-family: var(--mono);
+          font-family: var(--vk-font-mono);
           font-size: 0.8rem;
         }
       }
@@ -120,17 +139,17 @@ export function PlaygroundPage() {
   const combinatorClass = css`
     & .item + .item {
       margin-top: 8px;
-      border-top: 1px dashed var(--border);
+      border-top: 1px dashed var(--vk-color-border);
       padding-top: 8px;
     }
 
     & .item:first-child {
-      color: var(--accent);
+      color: var(--vk-color-accent);
       font-weight: 600;
     }
 
     & .item:last-child {
-      color: var(--success);
+      color: var(--vk-color-success);
     }
 
     & .item:nth-child(even) {
@@ -138,28 +157,10 @@ export function PlaygroundPage() {
     }
   `;
 
-  const sliderClass = css`
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 6px;
-    border-radius: 3px;
-    background: var(--surface-3);
-    outline: none;
-    &::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: var(--accent);
-      cursor: pointer;
-    }
-  `;
-
   const statusBase = css`
     padding: 16px 20px;
-    border-radius: var(--radius);
-    border: 2px solid var(--border);
+    border-radius: var(--vk-radius-md);
+    border: 2px solid var(--vk-color-border);
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
@@ -197,43 +198,48 @@ export function PlaygroundPage() {
   `;
 
   const statusSuccess = css`
-    border-color: var(--success);
-    background: var(--success-dim);
-    color: var(--success);
+    border-color: var(--vk-color-success);
+    background: var(--vk-color-success-dim);
+    color: var(--vk-color-success);
     & .icon {
-      background: var(--success);
-      color: var(--bg);
+      background: var(--vk-color-success);
+      color: var(--vk-color-bg);
     }
   `;
   const statusWarning = css`
-    border-color: var(--accent);
-    background: var(--accent-dim);
-    color: var(--accent);
+    border-color: var(--vk-color-accent);
+    background: var(--vk-color-accent-dim);
+    color: var(--vk-color-accent);
     & .icon {
-      background: var(--accent);
-      color: var(--bg);
+      background: var(--vk-color-accent);
+      color: var(--vk-color-bg);
     }
   `;
   const statusError = css`
-    border-color: var(--danger);
-    background: var(--danger-dim);
-    color: var(--danger);
+    border-color: var(--vk-color-danger);
+    background: var(--vk-color-danger-dim);
+    color: var(--vk-color-danger);
     & .icon {
-      background: var(--danger);
-      color: var(--bg);
+      background: var(--vk-color-danger);
+      color: var(--vk-color-bg);
     }
   `;
   const statusInfo = css`
-    border-color: var(--info);
-    background: var(--info-dim);
-    color: var(--info);
+    border-color: var(--vk-color-info);
+    background: var(--vk-color-info-dim);
+    color: var(--vk-color-info);
     & .icon {
-      background: var(--info);
-      color: var(--bg);
+      background: var(--vk-color-info);
+      color: var(--vk-color-bg);
     }
   `;
 
-  const statusMap = { success: statusSuccess, warning: statusWarning, error: statusError, info: statusInfo };
+  const statusMap = {
+    success: statusSuccess,
+    warning: statusWarning,
+    error: statusError,
+    info: statusInfo,
+  };
   const statusIcons = { success: "✓", warning: "!", error: "✕", info: "i" };
   const statusMessages = {
     success: "All systems operational. Deployment completed.",
@@ -244,7 +250,9 @@ export function PlaygroundPage() {
 
   const propRounded = css`
     border-radius: 24px !important;
-    & .icon { border-radius: 12px; }
+    & .icon {
+      border-radius: 12px;
+    }
   `;
   const propShadow = css`
     box-shadow:
@@ -280,55 +288,22 @@ export function PlaygroundPage() {
   const borderRadius = signal(10);
   const opacity = signal(100);
 
-  const toggleChipOff = css`
-    font-family: var(--font);
-    font-size: 0.8rem;
-    font-weight: 500;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 6px 14px;
-    cursor: pointer;
-    background: var(--surface-2);
-    color: var(--text-muted);
-    transition: all 0.15s ease;
-    user-select: none;
-    &:hover {
-      border-color: var(--text-muted);
-      color: var(--text);
-    }
-  `;
-  const toggleChipOn = css`
-    font-family: var(--font);
-    font-size: 0.8rem;
-    font-weight: 600;
-    border: 1px solid var(--accent);
-    border-radius: 20px;
-    padding: 6px 14px;
-    cursor: pointer;
-    background: var(--accent-dim);
-    color: var(--accent);
-    transition: all 0.15s ease;
-    user-select: none;
-    &:hover {
-      filter: brightness(1.15);
-    }
-  `;
   const previewBoxClass = css`
     width: 100%;
-    background: var(--surface-2);
-    border: 2px solid var(--border);
+    background: var(--vk-color-surface-2);
+    border: 2px solid var(--vk-color-border);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--mono);
+    font-family: var(--vk-font-mono);
     font-weight: 600;
     transition: all 0.3s ease;
     overflow: hidden;
-    color: var(--text);
+    color: var(--vk-color-text);
   `;
 
-  return html`<div class=${pageClass}>
-    <h1 class=${headingClass}>Playground</h1>
+  return html`<section>
+    <h2>Reactive Playground</h2>
     <p class=${subtitleClass}>
       Deeply nested reactive objects, complex CSS selectors, and signal
       chains.
@@ -337,30 +312,30 @@ export function PlaygroundPage() {
     <div
       style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;"
     >
-      <div class=${cardClass}>
+      <article>
         <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:16px;">
           Deep Reactive Object
         </h3>
         <div style="display:flex;flex-direction:column;gap:10px;">
-          <label style="font-size:0.85rem;color:var(--text-muted);">
+          <label>
             user.name
             <input
-              class=${inputClass}
               style="margin-top:4px;"
               value=${() => state.user.name}
               oninput=${(e: Event) => {
-      state.user.name = (e.target as HTMLInputElement).value;
-    }}
+                state.user.name = (e.target as HTMLInputElement).value;
+              }}
             />
           </label>
-          <label style="font-size:0.85rem;color:var(--text-muted);">
+          <label>
             user.settings.theme
             <select
-              class=${selectClass}
               style="width:100%;margin-top:4px;"
               onchange=${(e: Event) => {
-      state.user.settings.theme = (e.target as HTMLSelectElement).value;
-    }}
+                state.user.settings.theme = (
+                  e.target as HTMLSelectElement
+                ).value;
+              }}
             >
               <option value="dark" selected>dark</option>
               <option value="light">light</option>
@@ -369,41 +344,41 @@ export function PlaygroundPage() {
           </label>
           <div style="display:flex;gap:12px;align-items:center;">
             <label
-              style="font-size:0.85rem;color:var(--text-muted);display:flex;gap:6px;align-items:center;"
+              style="display:flex;gap:6px;align-items:center;"
             >
               <input
                 type="checkbox"
                 checked=${() => state.user.settings.notifications.email}
                 onclick=${() => {
-      state.user.settings.notifications.email =
-        !state.user.settings.notifications.email;
-    }}
+                  state.user.settings.notifications.email =
+                    !state.user.settings.notifications.email;
+                }}
               />
               email
             </label>
             <label
-              style="font-size:0.85rem;color:var(--text-muted);display:flex;gap:6px;align-items:center;"
+              style="display:flex;gap:6px;align-items:center;"
             >
               <input
                 type="checkbox"
                 checked=${() => state.user.settings.notifications.push}
                 onclick=${() => {
-      state.user.settings.notifications.push =
-        !state.user.settings.notifications.push;
-    }}
+                  state.user.settings.notifications.push =
+                    !state.user.settings.notifications.push;
+                }}
               />
               push
             </label>
           </div>
-          <label style="font-size:0.85rem;color:var(--text-muted);">
+          <label>
             user.settings.notifications.frequency
             <select
-              class=${selectClass}
               style="width:100%;margin-top:4px;"
               onchange=${(e: Event) => {
-      state.user.settings.notifications.frequency =
-        (e.target as HTMLSelectElement).value;
-    }}
+                state.user.settings.notifications.frequency = (
+                  e.target as HTMLSelectElement
+                ).value;
+              }}
             >
               <option value="daily" selected>daily</option>
               <option value="weekly">weekly</option>
@@ -412,20 +387,20 @@ export function PlaygroundPage() {
           </label>
           <div style="display:flex;gap:6px;margin-top:4px;">
             <button
-              class=${cx(btnBase, btnSuccess)}
+              data-variant="success"
               style="font-size:0.75rem;padding:6px 10px;"
               onclick=${() => {
-      state.user.scores.push(Math.floor(Math.random() * 100));
-    }}
+                state.user.scores.push(Math.floor(Math.random() * 100));
+              }}
             >
               Push score
             </button>
             <button
-              class=${cx(btnBase, btnDanger)}
+              data-variant="danger"
               style="font-size:0.75rem;padding:6px 10px;"
               onclick=${() => {
-      if (state.user.scores.length) state.user.scores.pop();
-    }}
+                if (state.user.scores.length) state.user.scores.pop();
+              }}
             >
               Pop score
             </button>
@@ -433,7 +408,7 @@ export function PlaygroundPage() {
         </div>
       </div>
 
-      <div class=${cardClass}>
+      <article>
         <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:16px;">
           Live State (auto-updates)
         </h3>
@@ -443,7 +418,7 @@ export function PlaygroundPage() {
         >
           ${() => jsonView()}
         </div>
-      </div>
+      </article>
     </div>
 
     <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:16px;">
@@ -453,70 +428,61 @@ export function PlaygroundPage() {
     <div
       style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;"
     >
-      <div class=${cardClass}>
+      <article>
         <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:14px;">
           Status Variant + Property Toggles
         </h3>
         <p
-          style="font-size:0.82rem;color:var(--text-muted);margin-bottom:14px;"
+          style="font-size:0.82rem;color:var(--vk-color-text-muted);margin-bottom:14px;"
         >
           Entire class swapped via
-          <code
-            style="font-family:var(--mono);background:var(--surface-2);padding:1px 5px;border-radius:3px;"
-            >class=${"${"}() => statusMap[status()]}</code
-          >, extras layered with
-          <code
-            style="font-family:var(--mono);background:var(--surface-2);padding:1px 5px;border-radius:3px;"
-            >cx()</code
-          >.
+          <code>class=${"${"}() => statusMap[status()]}</code>, extras layered with
+          <code>cx()</code>.
         </p>
 
         <div style="display:flex;gap:6px;margin-bottom:14px;">
           ${(["success", "warning", "error", "info"] as const).map(
-      (s) => html`
+            (s) => html`
               <button
-                class=${() =>
-          status() === s
-            ? cx(btnBase, btnPrimary)
-            : cx(btnBase, btnGhost)}
+                data-ghost=${() => (status() === s ? null : "")}
                 style="font-size:0.75rem;padding:6px 12px;flex:1;"
                 onclick=${() => status(s)}
               >
                 ${s}
               </button>
             `,
-    )}
+          )}
         </div>
 
-        <div
+        <div role="group"
           style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;"
         >
           <button
-            class=${() => (rounded() ? toggleChipOn : toggleChipOff)}
+            aria-pressed=${() => (rounded() ? "true" : "false")}
             onclick=${() => rounded((v) => !v)}
           >
             rounded
           </button>
           <button
-            class=${() => (shadow() ? toggleChipOn : toggleChipOff)}
+            aria-pressed=${() => (shadow() ? "true" : "false")}
             onclick=${() => shadow((v) => !v)}
           >
             shadow
           </button>
           <button
-            class=${() => (dashed() ? toggleChipOn : toggleChipOff)}
+            aria-pressed=${() => (dashed() ? "true" : "false")}
             onclick=${() => dashed((v) => !v)}
           >
             dashed
           </button>
           <button
-            class=${() => (scaled() ? toggleChipOn : toggleChipOff)}
+            aria-pressed=${() => (scaled() ? "true" : "false")}
             onclick=${() => scaled((v) => !v)}
           >
             scale
           </button>
           <button
-            class=${() => (glow() ? toggleChipOn : toggleChipOff)}
+            aria-pressed=${() => (glow() ? "true" : "false")}
             onclick=${() => glow((v) => !v)}
           >
             glow
@@ -525,15 +491,15 @@ export function PlaygroundPage() {
 
         <div
           class=${() =>
-      cx(
-        statusBase,
-        statusMap[status()],
-        rounded() && propRounded,
-        shadow() && propShadow,
-        dashed() && propBorder,
-        scaled() && propScale,
-        glow() && propGlow,
-      )}
+            cx(
+              statusBase,
+              statusMap[status()],
+              rounded() && propRounded,
+              shadow() && propShadow,
+              dashed() && propBorder,
+              scaled() && propScale,
+              glow() && propGlow,
+            )}
         >
           <div class="icon">${() => statusIcons[status()]}</div>
           <div class="text">
@@ -549,29 +515,23 @@ export function PlaygroundPage() {
           cx(statusBase,
           <strong
             >${() =>
-      "status" +
-      status()[0].toUpperCase() +
-      status().slice(1)}</strong
+              "status" + status()[0].toUpperCase() + status().slice(1)}</strong
           >${() => (rounded() ? ", propRounded" : "")}${() =>
-      shadow() ? ", propShadow" : ""}${() =>
-        dashed() ? ", propBorder" : ""}${() =>
-          scaled() ? ", propScale" : ""}${() =>
-            glow() ? ", propGlow" : ""})
+            shadow() ? ", propShadow" : ""}${() =>
+            dashed() ? ", propBorder" : ""}${() =>
+            scaled() ? ", propScale" : ""}${() => (glow() ? ", propGlow" : "")})
         </div>
-      </div>
+      </article>
 
-      <div class=${cardClass}>
+      <article>
         <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:14px;">
           Reactive Inline Styles
         </h3>
         <p
-          style="font-size:0.82rem;color:var(--text-muted);margin-bottom:14px;"
+          style="font-size:0.82rem;color:var(--vk-color-text-muted);margin-bottom:14px;"
         >
           Computed
-          <code
-            style="font-family:var(--mono);background:var(--surface-2);padding:1px 5px;border-radius:3px;"
-            >style=${"${"}() => string}</code
-          >
+          <code>style=${"${"}() => string}</code>
           bound to signals. Each slider updates exactly one CSS property —
           no re-renders.
         </p>
@@ -580,51 +540,48 @@ export function PlaygroundPage() {
           style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;"
         >
           <label
-            style="display:flex;align-items:center;gap:10px;font-size:0.8rem;color:var(--text-muted);"
+            style="display:flex;align-items:center;gap:10px;font-size:0.8rem;color:var(--vk-color-text-muted);"
           >
             <span style="min-width:60px;">Size</span>
             <input
               type="range"
-              class=${sliderClass}
               min="50"
               max="200"
               value=${() => sizeScale()}
               oninput=${(e: Event) => sizeScale(+(e.target as HTMLInputElement).value)}
             />
-            <span class=${monoSmall} style="min-width:38px;"
-              >${() => sizeScale()}%</span
+            <code style="min-width:38px;"
+              >${() => sizeScale()}%</code
             >
           </label>
           <label
-            style="display:flex;align-items:center;gap:10px;font-size:0.8rem;color:var(--text-muted);"
+            style="display:flex;align-items:center;gap:10px;font-size:0.8rem;color:var(--vk-color-text-muted);"
           >
             <span style="min-width:60px;">Radius</span>
             <input
               type="range"
-              class=${sliderClass}
               min="0"
               max="50"
               value=${() => borderRadius()}
               oninput=${(e: Event) => borderRadius(+(e.target as HTMLInputElement).value)}
             />
-            <span class=${monoSmall} style="min-width:38px;"
-              >${() => borderRadius()}px</span
+            <code style="min-width:38px;"
+              >${() => borderRadius()}px</code
             >
           </label>
           <label
-            style="display:flex;align-items:center;gap:10px;font-size:0.8rem;color:var(--text-muted);"
+            style="display:flex;align-items:center;gap:10px;font-size:0.8rem;color:var(--vk-color-text-muted);"
           >
             <span style="min-width:60px;">Opacity</span>
             <input
               type="range"
-              class=${sliderClass}
               min="10"
               max="100"
               value=${() => opacity()}
               oninput=${(e: Event) => opacity(+(e.target as HTMLInputElement).value)}
             />
-            <span class=${monoSmall} style="min-width:38px;"
-              >${() => opacity()}%</span
+            <code style="min-width:38px;"
+              >${() => opacity()}%</code
             >
           </label>
         </div>
@@ -633,7 +590,7 @@ export function PlaygroundPage() {
           <div
             class=${previewBoxClass}
             style=${() =>
-      `height: ${sizeScale()}px; border-radius: ${borderRadius()}px; opacity: ${opacity() / 100}; font-size: ${Math.max(10, sizeScale() * 0.14)}px;`}
+              `height: ${sizeScale()}px; border-radius: ${borderRadius()}px; opacity: ${opacity() / 100}; font-size: ${Math.max(10, sizeScale() * 0.14)}px;`}
           >
             ${() => `${sizeScale()}% · ${borderRadius()}px · ${opacity()}%`}
           </div>
@@ -645,7 +602,7 @@ export function PlaygroundPage() {
           <strong>${() => borderRadius()}px</strong>; opacity:
           <strong>${() => (opacity() / 100).toFixed(2)}</strong>; ${"`"}}
         </div>
-      </div>
+      </article>
     </div>
 
     <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:16px;">
@@ -662,13 +619,12 @@ export function PlaygroundPage() {
       <span class="tag green">Green Tag</span>
       <span class="tag yellow">Yellow Tag</span>
       <input
-        class=${inputClass}
         style="margin-top:12px;width:200px;"
         placeholder="Focus me for :focus-within"
       />
     </div>
 
-    <div class=${cx(cardClass, deepNestClass)}>
+    <article class=${deepNestClass}>
       <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:12px;">
         Three-Level CSS Nesting
       </h3>
@@ -686,9 +642,9 @@ export function PlaygroundPage() {
           <div class="level3">Another Level 3</div>
         </div>
       </div>
-    </div>
+    </article>
 
-    <div class=${cx(cardClass, combinatorClass)}>
+    <article class=${combinatorClass}>
       <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:12px;">
         Combinator Selectors (+, :first-child, :last-child, :nth-child)
       </h3>
@@ -697,9 +653,9 @@ export function PlaygroundPage() {
       <div class="item">Third item</div>
       <div class="item">Fourth item (dimmed — :nth-child(even))</div>
       <div class="item">Fifth item (green — :last-child)</div>
-    </div>
+    </article>
     <details>
-      <summary class=${detailsSummary}>View source — reactive(), css\`\`, cx()</summary>
+      <summary>View source — reactive(), css\`\`, cx()</summary>
       ${code(`// Deep reactive proxy — mutate normally, changes propagate
 const state = reactive({
   user: {
@@ -722,8 +678,8 @@ state.user.scores.push(99);
 // Scoped CSS with nesting, pseudo-classes, @media
 const card = css\`
   padding: 20px;
-  border: 2px solid var(--border);
-  &:hover { border-color: var(--accent); }
+  border: 2px solid var(--vk-color-border);
+  &:hover { border-color: var(--vk-color-accent); }
   & > .title { font-weight: 700; }
   @media (max-width: 600px) { padding: 12px; }
 \`;
@@ -736,5 +692,5 @@ const classes = cx(
   shadow() && propShadow,
 );`)}
     </details>
-  </div>`;
+  </section>`;
 }

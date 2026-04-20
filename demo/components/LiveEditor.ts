@@ -1,12 +1,22 @@
 import {
-  signal, computed, effect, batch, untrack,
-  reactive, toRaw, isReactive, snapshot,
-  html, each,
-  css, keyframes, globalCss, cx,
+  signal,
+  computed,
+  effect,
+  batch,
+  untrack,
+  reactive,
+  toRaw,
+  isReactive,
+  snapshot,
+  html,
+  each,
+  css,
+  keyframes,
+  globalCss,
+  cx,
 } from "../../src/index.js";
 import { CodeJar } from "codejar";
 import { withLineNumbers } from "codejar-linenumbers";
-import "codejar-linenumbers/es/codejar-linenumbers.css";
 import Prism from "prismjs";
 
 // ── Styles ─────────────────────────────────────────────────
@@ -15,23 +25,49 @@ const wrapperClass = css`
 `;
 
 globalCss`
+  :root {
+    --editor-bg: #111118;
+    --editor-text: #d4d4d8;
+    --editor-line-nr: #4a4a5a;
+    --editor-gutter: rgba(255,255,255,0.04);
+  }
+  [data-theme="light"] {
+    --editor-bg: #f5f5f8;
+    --editor-text: #2a2a3e;
+    --editor-line-nr: #a0a0b0;
+    --editor-gutter: rgba(0,0,0,0.04);
+  }
+`;
+
+globalCss`
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) {
+      --editor-bg: #f5f5f8;
+      --editor-text: #2a2a3e;
+      --editor-line-nr: #a0a0b0;
+      --editor-gutter: rgba(0,0,0,0.04);
+    }
+  }
+`;
+
+globalCss`
   /* CodeJar editor overrides */
   .codejar-wrap {
-    border-radius: var(--radius) var(--radius) 0 0;
-    border: 1px solid var(--border);
-    background: #111118;
+    border-radius: var(--vk-radius-md) var(--vk-radius-md) 0 0;
+    border: 1px solid var(--vk-color-border);
+    background: var(--editor-bg);
   }
   .codejar-wrap:focus-within {
-    border-color: var(--accent);
+    border-color: var(--vk-color-accent);
   }
   .codejar-linenumbers-inner-wrap {
-    background: #111118 !important;
+    background: var(--editor-bg) !important;
   }
   .codejar-linenumbers {
-    background-color: rgba(255,255,255,0.04) !important;
+    background-color: var(--editor-gutter) !important;
   }
   .codejar-linenumber {
-    color: #4a4a5a !important;
+    color: var(--editor-line-nr) !important;
   }
 `;
 
@@ -39,11 +75,11 @@ const editorClass = css`
   display: block;
   width: 100%;
   min-height: 60px;
-  font-family: var(--mono);
+  font-family: var(--vk-font-mono);
   font-size: 0.82rem;
   line-height: 1.6;
-  background: #111118;
-  color: #d4d4d8;
+  background: var(--editor-bg);
+  color: var(--editor-text);
   padding: 16px;
   tab-size: 2;
   white-space: pre;
@@ -51,14 +87,14 @@ const editorClass = css`
   outline: none;
   box-sizing: border-box;
   border: none;
-  border-radius: var(--radius) var(--radius) 0 0;
+  border-radius: var(--vk-radius-md) var(--vk-radius-md) 0 0;
 `;
 
 const outputClass = css`
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--vk-color-surface);
+  border: 1px solid var(--vk-color-border);
   border-top: none;
-  border-radius: 0 0 var(--radius) var(--radius);
+  border-radius: 0 0 var(--vk-radius-md) var(--vk-radius-md);
   padding: 20px;
 `;
 
@@ -70,32 +106,37 @@ const outputHeaderClass = css`
 `;
 
 const outputLabelClass = css`
-  font-family: var(--mono);
+  font-family: var(--vk-font-mono);
   font-size: 0.68rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--accent);
+  color: var(--vk-color-accent);
   display: flex;
   align-items: center;
   gap: 6px;
-  &::before { content: "▶"; font-size: 0.55rem; }
+  &::before {
+    content: "▶";
+    font-size: 0.55rem;
+  }
 `;
 
 const resetBtnClass = css`
-  font-family: var(--mono);
+  font-family: var(--vk-font-mono);
   font-size: 0.68rem;
   background: none;
   border: none;
-  color: var(--text-muted);
+  color: var(--vk-color-text-muted);
   cursor: pointer;
   padding: 2px 6px;
-  &:hover { color: var(--accent); }
+  &:hover {
+    color: var(--vk-color-accent);
+  }
 `;
 
 const errorClass = css`
   color: #e45;
-  font-family: var(--mono);
+  font-family: var(--vk-font-mono);
   font-size: 0.8rem;
   white-space: pre-wrap;
   margin: 0;
@@ -103,17 +144,39 @@ const errorClass = css`
 
 // ── Sandbox ────────────────────────────────────────────────
 const SANDBOX_NAMES = [
-  "signal", "computed", "effect", "batch", "untrack",
-  "reactive", "toRaw", "isReactive", "snapshot",
-  "html", "each",
-  "css", "keyframes", "globalCss", "cx",
+  "signal",
+  "computed",
+  "effect",
+  "batch",
+  "untrack",
+  "reactive",
+  "toRaw",
+  "isReactive",
+  "snapshot",
+  "html",
+  "each",
+  "css",
+  "keyframes",
+  "globalCss",
+  "cx",
 ];
 
 const SANDBOX_VALUES: unknown[] = [
-  signal, computed, effect, batch, untrack,
-  reactive, toRaw, isReactive, snapshot,
-  html, each,
-  css, keyframes, globalCss, cx,
+  signal,
+  computed,
+  effect,
+  batch,
+  untrack,
+  reactive,
+  toRaw,
+  isReactive,
+  snapshot,
+  html,
+  each,
+  css,
+  keyframes,
+  globalCss,
+  cx,
 ];
 
 // ── Component ──────────────────────────────────────────────
@@ -137,7 +200,7 @@ export function LiveEditor({
 
   function evaluate(code: string) {
     // Clean up effects from the previous run
-    prevDisposers.forEach(d => d());
+    prevDisposers.forEach((d) => d());
     prevDisposers = [];
     outputContainer.innerHTML = "";
     err("");
@@ -155,18 +218,23 @@ export function LiveEditor({
       const fakeBody = new Proxy(document.body, {
         get(target, prop) {
           if (prop === "append") return fakeAppend;
-          if (prop === "appendChild") return (n: Node) => { captured.push(n); return n; };
+          if (prop === "appendChild")
+            return (n: Node) => {
+              captured.push(n);
+              return n;
+            };
           return Reflect.get(target, prop);
         },
       });
       const fakeDoc = new Proxy(document, {
         get(target, prop) {
           if (prop === "body") return fakeBody;
-          if (prop === "getElementById") return () => {
-            const el = document.createElement("div");
-            (el as any).append = fakeAppend;
-            return el;
-          };
+          if (prop === "getElementById")
+            return () => {
+              const el = document.createElement("div");
+              (el as any).append = fakeAppend;
+              return el;
+            };
           const val = Reflect.get(target, prop);
           return typeof val === "function" ? val.bind(target) : val;
         },
@@ -186,7 +254,7 @@ export function LiveEditor({
       );
       fn(...args, fakeDoc);
 
-      captured.forEach(n => outputContainer.append(n));
+      captured.forEach((n) => outputContainer.append(n));
       prevDisposers = disposers;
     } catch (e: any) {
       err(e?.message ?? String(e));
@@ -198,15 +266,23 @@ export function LiveEditor({
 
   // Build CodeJar editor
   const editorEl = document.createElement("div");
-  editorEl.className = `${editorClass} language-javascript`;
+  editorEl.className = `${editorClass} language-typescript`;
 
-  const highlight = withLineNumbers((el: HTMLElement) => {
-    const code = el.textContent || "";
-    el.innerHTML = Prism.highlight(code, Prism.languages.javascript, "javascript");
-  }, {
-    color: "#4a4a5a",
-    backgroundColor: "rgba(255,255,255,0.04)",
-  });
+  const highlight = withLineNumbers(
+    (el: HTMLElement) => {
+      const code = el.textContent || "";
+      el.innerHTML = Prism.highlight(
+        code,
+        /// @ts-ignore
+        Prism.languages["typescript"],
+        "typescript",
+      );
+    },
+    {
+      color: "#4a4a5a",
+      backgroundColor: "rgba(255,255,255,0.04)",
+    },
+  );
 
   // Defer CodeJar init until element is in the DOM
   requestAnimationFrame(() => {
@@ -218,7 +294,7 @@ export function LiveEditor({
     });
     // Set code via updateCode so highlighting + line numbers render immediately
     jar.updateCode(trimmed);
-    jar.onUpdate(code => {
+    jar.onUpdate((code) => {
       modified(code !== trimmed);
       evaluate(code);
     });
@@ -238,9 +314,14 @@ export function LiveEditor({
     <div class=${outputClass}>
       <div class=${outputHeaderClass}>
         <div class=${outputLabelClass}>${label}</div>
-        ${() => modified() ? html`<button class=${resetBtnClass} onclick=${reset}>↺ reset</button>` : ""}
+        ${() =>
+          modified()
+            ? html`<button class=${resetBtnClass} onclick=${reset}>
+                ↺ reset
+              </button>`
+            : ""}
       </div>
-      ${() => err() ? html`<pre class=${errorClass}>${err()}</pre>` : ""}
+      ${() => (err() ? html`<pre class=${errorClass}>${err()}</pre>` : "")}
       ${outputContainer}
     </div>
   </div>`;

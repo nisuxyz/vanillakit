@@ -1,52 +1,75 @@
-import { html, css, cx, createRouter, navLink } from "../src/index.js";
 import {
-  headerClass, logoClass, navClass,
-  navLinkBase, navLinkActive,
-  pageClass, headingClass, subtitleClass,
-} from "./styles.ts";
+  html,
+  css,
+  createRouter,
+  navLink,
+  navigate,
+  themeToggle,
+} from "../src/index.js";
+import { logoClass } from "./styles.ts";
 import { HomePage } from "./pages/home.ts";
-import { TasksPage } from "./pages/tasks.ts";
-import { ListStressPage } from "./pages/stress.ts";
-import { PlaygroundPage } from "./pages/playground.ts";
+import { ExamplesPage } from "./pages/examples.ts";
 import { AboutPage } from "./pages/about.ts";
-import { DocsPage } from "./pages/docs.ts";
-import { IntegrationsPage } from "./pages/integrations.ts";
+import { DocsPage } from "./pages/docs/index.ts";
+
+const { theme, toggle } = themeToggle();
+
+const themeToggleBtn = css`
+  background: none;
+  border: 1px solid var(--vk-color-border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  transition: all 0.15s ease;
+  color: var(--vk-color-text-muted);
+  &:hover {
+    color: var(--vk-color-accent);
+    border-color: var(--vk-color-accent);
+    transform: none;
+    filter: none;
+  }
+`;
 
 const RouterView = createRouter({
   "/": HomePage,
-  "/tasks": TasksPage,
-  "/stress": ListStressPage,
-  "/playground": PlaygroundPage,
+  "/examples": ExamplesPage,
   "/docs": DocsPage,
-  "/integrations": IntegrationsPage,
   "/about": AboutPage,
   "*": () =>
-    html`<div class=${pageClass}>
-      <h1 class=${headingClass}>404</h1>
-      <p class=${subtitleClass}>Not found.</p>
+    html`<div class="animate-in">
+      <h1>404</h1>
+      <p>Not found.</p>
     </div>`,
 });
 
 export function App() {
   return html`
-    <header class=${headerClass}>
-      <span class=${logoClass}>vanillakit_</span>
-      <nav class=${navClass}>
-        ${navLink("/", "Home", navLinkActive, navLinkBase)}
-        ${navLink("/docs", "Docs", navLinkActive, navLinkBase)}
-        ${navLink("/tasks", "Tasks", navLinkActive, navLinkBase)}
-        ${navLink("/playground", "Playground", navLinkActive, navLinkBase)}
-        ${navLink("/stress", "Stress", navLinkActive, navLinkBase)}
-        ${navLink("/integrations", "Integrations", navLinkActive, navLinkBase)}
-        ${navLink("/about", "About", navLinkActive, navLinkBase)}
-      </nav>
+    <header>
+      <a
+        class=${logoClass}
+        href="/"
+        onclick=${(e: Event) => {
+          e.preventDefault();
+          navigate("/");
+        }}
+        >vanillakit_</a
+      >
+      <div style="display:flex;align-items:center;gap:8px;">
+        <nav>
+          ${navLink("/", "Home")} ${navLink("/docs", "Docs")}
+          ${navLink("/examples", "Examples")} ${navLink("/about", "About")}
+        </nav>
+        <button class=${themeToggleBtn} onclick=${toggle} title="Toggle theme">
+          ${() => (theme() === "dark" ? "☀️" : "🌙")}
+        </button>
+      </div>
     </header>
     <main>${RouterView()}</main>
-    <footer
-      style="text-align:center;padding:48px 0 32px;color:var(--text-muted);font-size:0.78rem;letter-spacing:0.03em;"
-    >
-      Built with <span style="color:var(--accent);">vanillakit</span> —
-      zero deps, ~760 lines of JS
+    <footer>
+      Built with <span class="text-accent">vanillakit</span> — zero deps, ~760
+      lines of JS
     </footer>
   `;
 }
