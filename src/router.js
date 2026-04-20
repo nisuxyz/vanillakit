@@ -69,24 +69,24 @@ export function createRouter(routeMap) {
 
 /**
  * Create a navigation link element with active-state styling.
+ * Uses aria-current="page" for the active link (styled by vanillacss).
  * @param {string} path
  * @param {string} text
- * @param {string} activeClass
- * @param {string} baseClass
  * @returns {HTMLAnchorElement}
  */
-export function navLink(path, text, activeClass, baseClass) {
+export function navLink(path, text) {
   const a = document.createElement("a");
   a.href = "#" + path;
   a.textContent = text;
   effect(() => {
-    a.className = (
-      path === "/"
-        ? currentPath() === "/"
-        : currentPath().startsWith(path)
-    )
-      ? activeClass
-      : baseClass;
+    const isActive = path === "/"
+      ? currentPath() === "/"
+      : currentPath().startsWith(path);
+    if (isActive) {
+      a.setAttribute("aria-current", "page");
+    } else {
+      a.removeAttribute("aria-current");
+    }
   });
   a.addEventListener("click", (e) => {
     e.preventDefault();

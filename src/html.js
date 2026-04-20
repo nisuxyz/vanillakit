@@ -4,11 +4,16 @@ import { signal, effect, untrack } from "./signal.js";
 let uid = 0;
 const MARKER_ATTR = "data-v-";
 
+// custom type for "vanilla elements" so you don't have to type Node | DocumentFragment
+/**
+ * @typedef {Node | DocumentFragment} VanillaElement
+ */
+
 /**
  * Tagged template that creates live DOM with reactive bindings.
  * @param {TemplateStringsArray} strings
  * @param {...*} values
- * @returns {Node | DocumentFragment}
+ * @returns {VanillaElement}
  */
 export function html(strings, ...values) {
   const id = uid++;
@@ -337,3 +342,6 @@ function _mountEach(anchor, { listFn, keyFn, renderFn }) {
     if (endAnchor.parentNode) endAnchor.remove();
   };
 }
+
+
+const x = html``;

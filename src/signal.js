@@ -61,6 +61,25 @@ export function signal(initial) {
     return val;
   }
   s.peek = () => val;
+  s.toString = () => {
+    console.warn(
+      "[vanillakit] Signal was coerced to a string. " +
+      "For reactivity, call the signal as a function and wrap your statement in a function instead: `() => signal()` not `signal`.\n" +
+      "  Example: html`<p>${() => mySignal() + ' suffix'}</p>`\n" +
+      "  To force stringification, use signal.peek() or String(signal())."
+    );
+    return String(val);
+  };
+  // @ts-ignore
+  s[Symbol.toPrimitive] = () => {
+    console.warn(
+      "[vanillakit] Signal was coerced to a primitive. " +
+      "For reactivity, call the signal as a function and wrap your statement in a function instead: `() => signal()` not `signal`.\n" +
+      "  Example: html`<p>${() => mySignal() + ' suffix'}</p>`\n" +
+      "  To force stringification, use signal.peek() or String(signal())."
+    );
+    return val;
+  };
   return /** @type {Signal<T>} */ (/** @type {unknown} */ (s));
 }
 
