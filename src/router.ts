@@ -1,29 +1,22 @@
 import { signal, effect } from "./signal.js";
+import type { Signal } from "./signal.js";
 
-/** @type {import("./signal.js").Signal<string>} */
-export const currentPath = signal(window.location.hash.slice(1) || "/");
-/** @type {import("./signal.js").Signal<Record<string, string>>} */
-export const routeParams = signal({});
+export const currentPath: Signal<string> = signal(
+  window.location.hash.slice(1) || "/",
+);
+export const routeParams: Signal<Record<string, string>> = signal({});
 
 window.addEventListener("hashchange", () => {
   currentPath(window.location.hash.slice(1) || "/");
 });
 
-/**
- * Navigate to a hash path.
- * @param {string} path
- * @returns {void}
- */
-export function navigate(path) {
+export function navigate(path: string): void {
   window.location.hash = path;
 }
 
-/**
- * Create a hash-based router that renders the matching route handler.
- * @param {Record<string, () => Node>} routeMap
- * @returns {() => HTMLDivElement}
- */
-export function createRouter(routeMap) {
+export function createRouter(
+  routeMap: Record<string, () => Node>,
+): () => HTMLDivElement {
   const entries = Object.entries(routeMap).sort((a, b) => {
     if (a[0] === "*") return 1;
     if (b[0] === "*") return -1;
@@ -33,13 +26,15 @@ export function createRouter(routeMap) {
     const container = document.createElement("div");
     effect(() => {
       const path = currentPath();
-      let match = null;
+      let match: {
+        handler: () => Node;
+        params: Record<string, string>;
+      } | null = null;
       for (const [pattern, handler] of entries) {
         const { regex, keys } = (() => {
-          if (pattern === "*") return { regex: /.*/, keys: /** @type {string[]} */ ([]) };
-          /** @type {string[]} */
-          const keys = [];
-          const re = pattern.replace(/:([^/]+)/g, (_, k) => {
+          if (pattern === "*") return { regex: /.*/, keys: [] as string[] };
+          const keys: string[] = [];
+          const re = pattern.replace(/:([^/]+)/g, (_, k: string) => {
             keys.push(k);
             return "([^/]+)";
           });
@@ -47,8 +42,7 @@ export function createRouter(routeMap) {
         })();
         const m = path.match(regex);
         if (m) {
-          /** @type {Record<string, string>} */
-          const p = {};
+          const p: Record<string, string> = {};
           keys.forEach((k, i) => {
             p[k] = decodeURIComponent(m[i + 1]);
           });
@@ -56,7 +50,7 @@ export function createRouter(routeMap) {
           break;
         }
       }
-      routeParams(match ? match.params : /** @type {Record<string, string>} */ ({}));
+      routeParams(match ? match.params : {});
       container.innerHTML = "";
       if (match) {
         const r = match.handler();
@@ -67,21 +61,13 @@ export function createRouter(routeMap) {
   };
 }
 
-/**
- * Create a navigation link element with active-state styling.
- * Uses aria-current="page" for the active link (styled by vanillacss).
- * @param {string} path
- * @param {string} text
- * @returns {HTMLAnchorElement}
- */
-export function navLink(path, text) {
+export function navLink(path: string, text: string): HTMLAnchorElement {
   const a = document.createElement("a");
   a.href = "#" + path;
   a.textContent = text;
   effect(() => {
-    const isActive = path === "/"
-      ? currentPath() === "/"
-      : currentPath().startsWith(path);
+    const isActive =
+      path === "/" ? currentPath() === "/" : currentPath().startsWith(path);
     if (isActive) {
       a.setAttribute("aria-current", "page");
     } else {

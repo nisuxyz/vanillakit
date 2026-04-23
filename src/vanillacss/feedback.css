@@ -1,0 +1,89 @@
+@layer vanillacss.feedback {
+
+  /* Alert */
+  [role="alert"] {
+    padding: var(--vk-space-md) var(--vk-space-lg);
+    border-radius: var(--vk-radius-md);
+    border: 1px solid var(--vk-color-border);
+    background: var(--vk-color-surface);
+    font-size: var(--vk-font-size-sm);
+  }
+
+  [role="alert"][data-color-variant="danger"] {
+    border-color: var(--vk-color-danger);
+    background: var(--vk-color-danger-dim);
+    color: var(--vk-color-danger);
+  }
+
+  [role="alert"][data-color-variant="success"] {
+    border-color: var(--vk-color-success);
+    background: var(--vk-color-success-dim);
+    color: var(--vk-color-success);
+  }
+
+  [role="alert"][data-color-variant="warning"] {
+    border-color: var(--vk-color-warning);
+    background: var(--vk-color-warning-dim);
+    color: var(--vk-color-warning);
+  }
+
+  [role="alert"][data-color-variant="primary"] {
+    border-color: var(--vk-color-accent);
+    background: var(--vk-color-accent-dim);
+    color: var(--vk-color-accent);
+  }
+
+  [role="alert"][data-color-variant="info"] {
+    border-color: var(--vk-color-info);
+    background: var(--vk-color-info-dim);
+    color: var(--vk-color-info);
+  }
+
+  /* Toast */
+  output[role="status"] {
+    position: fixed;
+    bottom: var(--vk-space-lg);
+    right: var(--vk-space-lg);
+    padding: var(--vk-space-sm) var(--vk-space-lg);
+    border-radius: var(--vk-radius-md);
+    background: var(--vk-color-text);
+    color: var(--vk-color-bg);
+    font-size: var(--vk-font-size-sm);
+    z-index: var(--vk-z-toast);
+    box-shadow: var(--vk-shadow-lg);
+  }
+
+  /* Progress bar */
+  progress {
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border: none;
+    border-radius: var(--vk-radius-full);
+    overflow: hidden;
+  }
+
+  progress::-webkit-progress-bar {
+    background: var(--vk-color-surface-2);
+    border-radius: var(--vk-radius-full);
+  }
+
+  progress::-webkit-progress-value {
+    background: var(--vk-color-accent);
+    border-radius: var(--vk-radius-full);
+    transition: width var(--vk-transition-speed-slow);
+  }
+
+  progress::-moz-progress-bar {
+    background: var(--vk-color-accent);
+    border-radius: var(--vk-radius-full);
+  }
+
+  /* Busy state */
+  [aria-busy="true"] {
+    opacity: 0.6;
+    pointer-events: none;
+    position: relative;
+  }
+
+}

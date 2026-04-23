@@ -1,24 +1,32 @@
 import { signal, effect, untrack } from "./signal.js";
+import type { Signal, ReadonlySignal } from "./signal.js";
 
-/** @type {number} */
 let uid = 0;
 const MARKER_ATTR = "data-v-";
 
-// custom type for "vanilla elements" so you don't have to type Node | DocumentFragment
-/**
- * @typedef {Node | DocumentFragment} VanillaElement
- */
+type VanillaNode = Node & {
+  __v_dispose?: () => void;
+  __v_disposers?: Array<() => void> | null;
+};
 
-/**
- * Tagged template that creates live DOM with reactive bindings.
- * @param {TemplateStringsArray} strings
- * @param {...*} values
- * @returns {VanillaElement}
- */
-export function html(strings, ...values) {
+export interface EachDescriptor<T> {
+  __v_each: true;
+  listFn: () => T[];
+  keyFn: (item: T, index: number) => unknown;
+  renderFn: (item: Signal<T>, index: ReadonlySignal<number>) => Node;
+}
+
+export function html(
+  strings: TemplateStringsArray,
+  ...values: unknown[]
+): Node | DocumentFragment {
   const id = uid++;
   let h = "";
-  const attrBindings = [];
+  const attrBindings: Array<{
+    index: number;
+    attrName: string;
+    elemMarker: string;
+  }> = [];
 
   for (let i = 0; i < strings.length; i++) {
     h += strings[i];
@@ -43,23 +51,19 @@ export function html(strings, ...values) {
   const tpl = document.createElement("template");
   tpl.innerHTML = h;
   const fragment = tpl.content;
-  /** @type {Array<() => void>} */
-  const disposers = [];
+  const disposers: Array<() => void> = [];
 
   for (const { index, attrName, elemMarker } of attrBindings) {
     const el = fragment.querySelector(`[${elemMarker}]`);
     if (!el) continue;
     el.removeAttribute(elemMarker);
-    _bindAttr(/** @type {HTMLElement} */(el), attrName, values[index], disposers);
+    _bindAttr(el as HTMLElement, attrName, values[index], disposers);
   }
 
-  const walker = document.createTreeWalker(
-    fragment,
-    NodeFilter.SHOW_COMMENT,
-  );
-  const comments = [];
+  const walker = document.createTreeWalker(fragment, NodeFilter.SHOW_COMMENT);
+  const comments: Array<{ node: Comment; index: number }> = [];
   while (walker.nextNode()) {
-    const c = /** @type {Comment} */ (walker.currentNode);
+    const c = walker.currentNode as Comment;
     if (c.data.startsWith(`v${id}-`)) {
       comments.push({
         node: c,
@@ -70,28 +74,21 @@ export function html(strings, ...values) {
   for (const { node, index } of comments)
     _bindChild(node, values[index], disposers);
 
-  // @ts-ignore — custom dispose property
-  fragment.__v_dispose = () => {
+  (fragment as VanillaNode).__v_dispose = () => {
     for (const d of disposers) d();
     disposers.length = 0;
   };
   const nodes = [...fragment.childNodes];
-  if (nodes.length > 0)
-    // @ts-ignore — custom disposers property
-    (nodes[0].__v_disposers || (nodes[0].__v_disposers = [])).push(
-      // @ts-ignore
-      fragment.__v_dispose,
+  if (nodes.length > 0) {
+    const first = nodes[0] as VanillaNode;
+    (first.__v_disposers || (first.__v_disposers = [])).push(
+      (fragment as VanillaNode).__v_dispose!,
     );
-  return fragment.childNodes.length === 1
-    ? fragment.childNodes[0]
-    : fragment;
+  }
+  return fragment.childNodes.length === 1 ? fragment.childNodes[0] : fragment;
 }
 
-/**
- * @param {string} str
- * @returns {boolean}
- */
-function _isInTag(str) {
+function _isInTag(str: string): boolean {
   for (let i = str.length - 1; i >= 0; i--) {
     if (str[i] === ">") return false;
     if (str[i] === "<") return true;
@@ -99,72 +96,63 @@ function _isInTag(str) {
   return false;
 }
 
-/**
- * @param {HTMLElement} el
- * @param {string} name
- * @param {*} value
- * @param {Array<() => void>} disposers
- */
-function _bindAttr(el, name, value, disposers) {
+function _bindAttr(
+  el: HTMLElement,
+  name: string,
+  value: unknown,
+  disposers: Array<() => void>,
+): void {
   if (name.startsWith("on")) {
     el.addEventListener(
       name.slice(2).toLowerCase(),
-      typeof value === "function" ? value : () => { },
+      typeof value === "function" ? (value as EventListener) : () => {},
     );
     return;
   }
   if (name === "ref" && typeof value === "function") {
-    value(el);
+    (value as (el: HTMLElement) => void)(el);
     return;
   }
   if (typeof value === "function") {
-    disposers.push(effect(() => _setAttr(el, name, value())));
+    disposers.push(
+      effect(() => _setAttr(el, name, (value as () => unknown)())),
+    );
     return;
   }
   _setAttr(el, name, value);
 }
 
-/**
- * @param {HTMLElement} el
- * @param {string} name
- * @param {*} value
- */
-function _setAttr(el, name, value) {
+function _setAttr(el: HTMLElement, name: string, value: unknown): void {
   if (name === "class" || name === "className")
-    el.className = value ?? "";
+    el.className = (value as string) ?? "";
   else if (name === "style" && typeof value === "object")
     Object.assign(el.style, value);
   else if (name === "style" && typeof value === "string")
     el.setAttribute("style", value);
-  else if (name === "checked") /** @type {HTMLInputElement} */ (el).checked = !!value;
-  else if (name === "value" && "value" in el) /** @type {HTMLInputElement} */ (el).value = value ?? "";
-  else if (
-    name === "disabled" ||
-    name === "readonly" ||
-    name === "hidden"
-  ) {
+  else if (name === "checked") (el as HTMLInputElement).checked = !!value;
+  else if (name === "value" && "value" in el)
+    (el as HTMLInputElement).value = (value as string) ?? "";
+  else if (name === "disabled" || name === "readonly" || name === "hidden") {
     if (value) el.setAttribute(name, "");
     else el.removeAttribute(name);
   } else if (value === false || value == null) el.removeAttribute(name);
   else el.setAttribute(name, value === true ? "" : String(value));
 }
 
-/**
- * @param {Comment} anchor
- * @param {*} value
- * @param {Array<() => void>} disposers
- */
-function _bindChild(anchor, value, disposers) {
-  if (value != null && value.__v_each) {
-    disposers.push(_mountEach(anchor, value));
+function _bindChild(
+  anchor: Comment,
+  value: unknown,
+  disposers: Array<() => void>,
+): void {
+  if (value != null && (value as EachDescriptor<unknown>).__v_each) {
+    disposers.push(_mountEach(anchor, value as EachDescriptor<unknown>));
     return;
   }
   if (typeof value === "function") {
-    /** @type {Node | Node[] | null} */
-    let cur = null;
+    let cur: Node | Node[] | null = null;
     disposers.push(
       effect(() => {
-        cur = _reconcile(anchor, cur, value());
+        cur = _reconcile(anchor, cur, (value as () => unknown)());
       }),
     );
     return;
@@ -172,13 +160,11 @@ function _bindChild(anchor, value, disposers) {
   _reconcile(anchor, null, value);
 }
 
-/**
- * @param {Comment} anchor
- * @param {Node | Node[] | null} current
- * @param {*} value
- * @returns {Node | Node[] | null}
- */
-function _reconcile(anchor, current, value) {
+function _reconcile(
+  anchor: Comment,
+  current: Node | Node[] | null,
+  value: unknown,
+): Node | Node[] | null {
   const parent = anchor.parentNode;
   if (!parent) return current;
   if (current) {
@@ -186,14 +172,14 @@ function _reconcile(anchor, current, value) {
     for (const n of ns)
       if (n.parentNode) {
         _disposeTree(n);
-        /** @type {ChildNode} */ (n).remove();
+        (n as ChildNode).remove();
       }
   }
   if (value == null || value === false || value === true) return null;
   if (Array.isArray(value)) {
     const frag = document.createDocumentFragment();
-    const ns = [];
-    for (const item of value.flat(Infinity)) {
+    const ns: Node[] = [];
+    for (const item of (value as unknown[]).flat(Infinity)) {
       const n = _toNode(item);
       if (n) {
         frag.append(n);
@@ -208,54 +194,45 @@ function _reconcile(anchor, current, value) {
   return node;
 }
 
-/**
- * @param {*} v
- * @returns {Node | null}
- */
-function _toNode(v) {
+function _toNode(v: unknown): Node | null {
   if (v == null || v === false || v === true) return null;
   if (v instanceof Node) return v;
   return document.createTextNode(String(v));
 }
 
-/**
- * @param {Node} node
- */
-function _disposeTree(node) {
-  // @ts-ignore — custom disposers property
-  if (node.__v_disposers) {
-    // @ts-ignore
-    for (const d of node.__v_disposers) d();
-    // @ts-ignore
-    node.__v_disposers = null;
+function _disposeTree(node: Node): void {
+  const vNode = node as VanillaNode;
+  if (vNode.__v_disposers) {
+    for (const d of vNode.__v_disposers) d();
+    vNode.__v_disposers = null;
   }
   if (node.childNodes) for (const c of node.childNodes) _disposeTree(c);
 }
 
 // ---- each() — Keyed list reconciliation ----
 
-/**
- * Keyed list reconciliation for reactive arrays.
- * @template T
- * @param {() => T[]} listFn
- * @param {(item: T, index: number) => any} keyFn
- * @param {(item: import("./signal.js").Signal<T>, index: import("./signal.js").ReadonlySignal<number>) => Node} renderFn
- * @returns {{ __v_each: true, listFn: () => T[], keyFn: (item: T, index: number) => any, renderFn: (item: import("./signal.js").Signal<T>, index: import("./signal.js").ReadonlySignal<number>) => Node }}
- */
-export function each(listFn, keyFn, renderFn) {
+export function each<T>(
+  listFn: () => T[],
+  keyFn: (item: T, index: number) => unknown,
+  renderFn: (item: Signal<T>, index: ReadonlySignal<number>) => Node,
+): EachDescriptor<T> {
   return { __v_each: true, listFn, keyFn, renderFn };
 }
 
-/**
- * @param {Comment} anchor
- * @param {{ listFn: () => any[], keyFn: (item: any, index: number) => any, renderFn: Function }} desc
- * @returns {() => void}
- */
-function _mountEach(anchor, { listFn, keyFn, renderFn }) {
+type EachEntry<T> = {
+  nodes: Node[];
+  disposers: Array<() => void>;
+  itemSig: Signal<T>;
+  indexSig: Signal<number>;
+};
+
+function _mountEach<T>(
+  anchor: Comment,
+  { listFn, keyFn, renderFn }: EachDescriptor<T>,
+): () => void {
   const endAnchor = document.createComment("/each");
   anchor.parentNode?.insertBefore(endAnchor, anchor.nextSibling);
-  /** @type {Map<any, { nodes: Node[], disposers: Array<() => void>, itemSig: any, indexSig: any }>} */
-  const entries = new Map();
+  const entries: Map<unknown, EachEntry<T>> = new Map();
 
   const dispose = effect(() => {
     const items = listFn();
@@ -272,14 +249,14 @@ function _mountEach(anchor, { listFn, keyFn, renderFn }) {
         for (const d of entry.disposers) d();
         for (const n of entry.nodes) {
           _disposeTree(n);
-          /** @type {ChildNode} */ (n).remove();
+          (n as ChildNode).remove();
         }
         entries.delete(key);
       }
     }
 
     // Phase 2: Insert / update / reorder
-    let cursor = anchor.nextSibling;
+    let cursor: ChildNode | null = anchor.nextSibling;
 
     for (let i = 0; i < arr.length; i++) {
       const key = newKeys[i];
@@ -289,22 +266,23 @@ function _mountEach(anchor, { listFn, keyFn, renderFn }) {
         // New entry
         const itemSig = signal(arr[i]);
         const indexSig = signal(i);
-        const disposers = [];
-        /** @type {Node | DocumentFragment | undefined} */
-        let rendered;
+        const disposers: Array<() => void> = [];
+        let rendered: Node | DocumentFragment | undefined;
         const outerDispose = untrack(() => {
-          rendered = renderFn(itemSig, indexSig);
-          // @ts-ignore — custom dispose property
-          return rendered?.__v_dispose || null;
+          rendered = renderFn(
+            itemSig,
+            indexSig as unknown as ReadonlySignal<number>,
+          );
+          return (rendered as VanillaNode).__v_dispose ?? null;
         });
-        const nodes =
+        const nodes: Node[] =
           rendered instanceof DocumentFragment
             ? [...rendered.childNodes]
             : [
-              rendered instanceof Node
-                ? rendered
-                : document.createTextNode(String(rendered)),
-            ];
+                rendered instanceof Node
+                  ? rendered
+                  : document.createTextNode(String(rendered)),
+              ];
         if (outerDispose) disposers.push(outerDispose);
         entry = { nodes, disposers, itemSig, indexSig };
         entries.set(key, entry);
@@ -312,7 +290,8 @@ function _mountEach(anchor, { listFn, keyFn, renderFn }) {
         for (const n of nodes) frag.append(n);
         parentNode.insertBefore(frag, cursor);
         cursor =
-          entry.nodes[entry.nodes.length - 1]?.nextSibling ?? cursor;
+          (entry.nodes[entry.nodes.length - 1]
+            ?.nextSibling as ChildNode | null) ?? cursor;
       } else {
         // Update signals
         entry.itemSig(arr[i]);
@@ -323,7 +302,8 @@ function _mountEach(anchor, { listFn, keyFn, renderFn }) {
         }
         cursor =
           entry.nodes.length > 0
-            ? entry.nodes[entry.nodes.length - 1].nextSibling
+            ? (entry.nodes[entry.nodes.length - 1]
+                .nextSibling as ChildNode | null)
             : cursor;
       }
     }
@@ -335,13 +315,10 @@ function _mountEach(anchor, { listFn, keyFn, renderFn }) {
       for (const d of entry.disposers) d();
       for (const n of entry.nodes) {
         _disposeTree(n);
-        /** @type {ChildNode} */ (n).remove();
+        (n as ChildNode).remove();
       }
     }
     entries.clear();
     if (endAnchor.parentNode) endAnchor.remove();
   };
 }
-
-
-const x = html``;

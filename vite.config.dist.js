@@ -1,11 +1,12 @@
 import { defineConfig } from "vite";
 import { compression, defineAlgorithm } from "vite-plugin-compression2";
 import * as zlib from "zlib";
+import { cpSync } from "fs";
 
 export default defineConfig({
   build: {
     lib: {
-      entry: "src/index.js",
+      entry: "src/index.ts",
       formats: ["es"],
       fileName: "vanillakit",
     },
@@ -36,6 +37,12 @@ export default defineConfig({
           }
         })
       ]
-    })
+    }),
+    {
+      name: 'copy-vanillacss',
+      closeBundle() {
+        cpSync('src/vanillacss', 'dist/vanillacss', { recursive: true });
+      },
+    },
   ],
 });

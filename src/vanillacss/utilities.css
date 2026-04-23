@@ -1,0 +1,195 @@
+@layer vanillacss.utilities {
+
+  /* Container */
+  .container {
+    max-width: 820px;
+    margin-inline: auto;
+    padding-inline: var(--vk-space-lg);
+  }
+
+  /* Skeleton loading */
+  [data-skeleton] {
+    background: linear-gradient(90deg, var(--vk-color-surface-2) 25%, var(--vk-color-surface) 50%, var(--vk-color-surface-2) 75%);
+    background-size: 200% 100%;
+    animation: vk-skeleton 1.5s infinite;
+    border-radius: var(--vk-radius-sm);
+    color: transparent !important;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Empty state */
+  [data-empty] {
+    text-align: center;
+    padding: var(--vk-space-2xl) var(--vk-space-lg);
+    color: var(--vk-color-text-muted);
+  }
+
+  /* Badge */
+  [data-badge] {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--vk-radius-full);
+    background: var(--vk-color-surface-2);
+    color: var(--vk-color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  [data-badge][data-color-variant="primary"] {
+    background: var(--vk-color-accent-dim);
+    color: var(--vk-color-accent);
+  }
+
+  [data-badge][data-color-variant="danger"] {
+    background: var(--vk-color-danger-dim);
+    color: var(--vk-color-danger);
+  }
+
+  [data-badge][data-color-variant="success"] {
+    background: var(--vk-color-success-dim);
+    color: var(--vk-color-success);
+  }
+
+  [data-badge][data-color-variant="warning"] {
+    background: var(--vk-color-warning-dim);
+    color: var(--vk-color-warning);
+  }
+
+  [data-badge][data-color-variant="info"] {
+    background: var(--vk-color-info-dim);
+    color: var(--vk-color-info);
+  }
+
+  /* Screenreader only */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Text color utilities */
+  .text-accent {
+    color: var(--vk-color-accent);
+  }
+
+  .text-danger {
+    color: var(--vk-color-danger);
+  }
+
+  .text-success {
+    color: var(--vk-color-success);
+  }
+
+  .text-info {
+    color: var(--vk-color-info);
+  }
+
+  .text-muted {
+    color: var(--vk-color-text-muted);
+  }
+
+
+  /* ========== KEYFRAMES ========== */
+
+  @keyframes vk-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes vk-pulse {
+
+    0%,
+    100% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.04);
+    }
+  }
+
+  @keyframes vk-dialog-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes vk-tooltip-in {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(4px);
+    }
+  }
+
+  @keyframes vk-skeleton {
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  @keyframes vk-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes vk-fade-in-fast {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Animation utilities */
+  .animate-in {
+    animation: vk-fade-in 0.25s ease-out;
+  }
+
+  .animate-in-fast {
+    animation: vk-fade-in-fast 0.2s ease-out;
+  }
+
+  .animate-spin {
+    animation: vk-spin 0.6s linear infinite;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+}

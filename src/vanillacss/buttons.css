@@ -1,0 +1,327 @@
+@layer vanillacss.buttons {
+
+  button,
+  input[type="submit"],
+  input[type="reset"],
+  input[type="button"],
+  a[role="button"] {
+    font-family: inherit;
+    font-size: var(--vk-font-size-sm);
+    font-weight: 600;
+    line-height: 1;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--vk-color-border);
+    border-radius: var(--vk-radius-md);
+    background: var(--vk-color-surface);
+    color: var(--vk-color-text);
+    cursor: pointer;
+    transition: all var(--vk-transition-speed) var(--vk-ease-default);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--vk-space-xs);
+    text-decoration: none;
+  }
+
+  button:hover,
+  input[type="submit"]:hover,
+  input[type="reset"]:hover,
+  input[type="button"]:hover,
+  a[role="button"]:hover {
+    background: var(--vk-color-surface-2);
+    filter: none;
+    text-decoration: none;
+  }
+
+  button:active,
+  a[role="button"]:active {
+    transform: translateY(1px);
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* ── Color variants ──────────────────────────────────── */
+
+  :is(button, a[role="button"])[data-color-variant="primary"] {
+    background: var(--vk-color-accent);
+    color: white;
+    border-color: transparent;
+  }
+
+  :is(button, a[role="button"])[data-color-variant="primary"]:hover {
+    filter: brightness(1.1);
+  }
+
+  :is(button, a[role="button"])[data-color-variant="danger"] {
+    background: var(--vk-color-danger-dim);
+    color: var(--vk-color-danger);
+    border-color: transparent;
+  }
+
+  :is(button, a[role="button"])[data-color-variant="danger"]:hover {
+    background: var(--vk-color-danger);
+    color: white;
+  }
+
+  :is(button, a[role="button"])[data-color-variant="success"] {
+    background: var(--vk-color-success-dim);
+    color: var(--vk-color-success);
+    border-color: transparent;
+  }
+
+  :is(button, a[role="button"])[data-color-variant="success"]:hover {
+    filter: brightness(1.1);
+  }
+
+  :is(button, a[role="button"])[data-color-variant="warning"] {
+    background: var(--vk-color-warning-dim);
+    color: var(--vk-color-warning);
+    border-color: transparent;
+  }
+
+  :is(button, a[role="button"])[data-color-variant="warning"]:hover {
+    filter: brightness(1.1);
+  }
+
+  :is(button, a[role="button"])[data-color-variant="info"] {
+    background: var(--vk-color-info-dim);
+    color: var(--vk-color-info);
+    border-color: transparent;
+  }
+
+  :is(button, a[role="button"])[data-color-variant="info"]:hover {
+    filter: brightness(1.1);
+  }
+
+  /* ── Style variants ──────────────────────────────────── */
+
+  :is(button, a[role="button"])[data-style-variant="ghost"] {
+    background: transparent;
+    border-color: transparent;
+  }
+
+  :is(button, a[role="button"])[data-style-variant="ghost"]:hover {
+    background: var(--vk-color-surface);
+    filter: none;
+  }
+
+  :is(button, a[role="button"])[data-style-variant="outline"] {
+    background: transparent;
+    border-color: currentColor;
+  }
+
+  :is(button, a[role="button"])[data-style-variant="outline"]:hover {
+    background: var(--vk-color-surface);
+    filter: none;
+  }
+
+  /* ── Style + color combos ────────────────────────────── */
+  /* Ghost + color: transparent bg, variant color as text + dim hover */
+
+  :is(button, a[role="button"])[data-style-variant="ghost"][data-color-variant="primary"] {
+    color: var(--vk-color-accent);
+  }
+
+  :is(button, a[role="button"])[data-style-variant="ghost"][data-color-variant="primary"]:hover {
+    background: var(--vk-color-accent-dim);
+    filter: none;
+  }
+
+  :is(button, a[role="button"])[data-style-variant="ghost"][data-color-variant="danger"] {
+    color: var(--vk-color-danger);
+  }
+
+  :is(button, a[role="button"])[data-style-variant="ghost"][data-color-variant="danger"]:hover {
+    background: var(--vk-color-danger-dim);
+    filter: none;
+  }
+
+  :is(button, a[role="button"])[data-style-variant="ghost"][data-color-variant="success"] {
+    color: var(--vk-color-success);
+  }
+
+  :is(button, a[role="button"])[data-style-variant="ghost"][data-color-variant="success"]:hover {
+    background: var(--vk-color-success-dim);
+    filter: none;
+  }
+
+  :is(button, a[role="button"])[data-style-variant="ghost"][data-color-variant="warning"] {
+    color: var(--vk-color-warning);
+  }
+
+  :is(button, a[role="button"])[data-style-variant="ghost"][data-color-variant="warning"]:hover {
+    background: var(--vk-color-warning-dim);
+    filter: none;
+  }
+
+  :is(button, a[role="button"])[data-style-variant="ghost"][data-color-variant="info"] {
+    color: var(--vk-color-info);
+  }
+
+  :is(button, a[role="button"])[data-style-variant="ghost"][data-color-variant="info"]:hover {
+    background: var(--vk-color-info-dim);
+    filter: none;
+  }
+
+  /* Outline + color: transparent bg, variant color for border+text, fill on hover */
+
+  :is(button, a[role="button"])[data-style-variant="outline"][data-color-variant="primary"] {
+    color: var(--vk-color-accent);
+    border-color: var(--vk-color-accent);
+  }
+
+  :is(button, a[role="button"])[data-style-variant="outline"][data-color-variant="primary"]:hover {
+    background: var(--vk-color-accent);
+    color: white;
+    filter: none;
+  }
+
+  :is(button, a[role="button"])[data-style-variant="outline"][data-color-variant="danger"] {
+    color: var(--vk-color-danger);
+    border-color: var(--vk-color-danger);
+  }
+
+  :is(button, a[role="button"])[data-style-variant="outline"][data-color-variant="danger"]:hover {
+    background: var(--vk-color-danger);
+    color: white;
+    filter: none;
+  }
+
+  :is(button, a[role="button"])[data-style-variant="outline"][data-color-variant="success"] {
+    color: var(--vk-color-success);
+    border-color: var(--vk-color-success);
+  }
+
+  :is(button, a[role="button"])[data-style-variant="outline"][data-color-variant="success"]:hover {
+    background: var(--vk-color-success);
+    color: white;
+    filter: none;
+  }
+
+  :is(button, a[role="button"])[data-style-variant="outline"][data-color-variant="warning"] {
+    color: var(--vk-color-warning);
+    border-color: var(--vk-color-warning);
+  }
+
+  :is(button, a[role="button"])[data-style-variant="outline"][data-color-variant="warning"]:hover {
+    background: var(--vk-color-warning);
+    color: white;
+    filter: none;
+  }
+
+  :is(button, a[role="button"])[data-style-variant="outline"][data-color-variant="info"] {
+    color: var(--vk-color-info);
+    border-color: var(--vk-color-info);
+  }
+
+  :is(button, a[role="button"])[data-style-variant="outline"][data-color-variant="info"]:hover {
+    background: var(--vk-color-info);
+    color: white;
+    filter: none;
+  }
+
+  /* ── Loading ─────────────────────────────────────────── */
+
+  :is(button, a[role="button"])[data-loading] {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  :is(button, a[role="button"])[data-loading]::after {
+    content: '';
+    width: 1em;
+    height: 1em;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: vk-spin 0.6s linear infinite;
+  }
+
+  /* ── Sizes ───────────────────────────────────────────── */
+
+  :is(button, a[role="button"])[data-size="sm"] {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  :is(button, a[role="button"])[data-size="lg"] {
+    font-size: 1rem;
+    padding: 0.8rem 1.6rem;
+  }
+
+  :is(button, a[role="button"])[data-size="xl"] {
+    font-size: 1.125rem;
+    padding: 1rem 2rem;
+  }
+
+  /* ── Button group ────────────────────────────────────── */
+
+  [role="group"] {
+    display: inline-flex;
+  }
+
+  [role="group"]>button {
+    border-radius: 0;
+  }
+
+  [role="group"]>button+button {
+    border-left: 0;
+  }
+
+  [role="group"]>button:first-child {
+    border-radius: var(--vk-radius-md) 0 0 var(--vk-radius-md);
+  }
+
+  [role="group"]>button:last-child {
+    border-radius: 0 var(--vk-radius-md) var(--vk-radius-md) 0;
+  }
+
+  /* ── Pressed / toggle ────────────────────────────────── */
+
+  button[aria-pressed="true"] {
+    background: var(--vk-color-surface-3);
+    color: var(--vk-color-text);
+    font-weight: 700;
+  }
+
+  /* ── Hover effects ───────────────────────────────────── */
+
+  [data-hover="glow"]:hover {
+    box-shadow: 0 0 20px hsl(var(--vk-gold) / 0.3);
+  }
+
+  [data-hover="scale"]:hover {
+    transform: scale(1.03);
+  }
+
+  [data-hover="lift"]:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--vk-shadow-md);
+  }
+
+  [data-hover="pulse"]:hover {
+    animation: vk-pulse 0.6s var(--vk-ease-default);
+  }
+
+  [data-hover="pop"]:hover {
+    transform: scale(1.05);
+    box-shadow: var(--vk-shadow-lg);
+  }
+
+  [data-hover="dim"]:hover {
+    opacity: 0.75;
+  }
+
+  [data-hover="bright"]:hover {
+    filter: brightness(1.15);
+  }
+
+  [data-hover="outline"]:hover {
+    outline: 2px solid var(--vk-color-accent);
+    outline-offset: 2px;
+  }
+
+}

@@ -1,0 +1,121 @@
+@layer vanillacss.data {
+
+  table {
+    width: 100%;
+    font-size: var(--vk-font-size-sm);
+  }
+
+  th,
+  td {
+    padding: var(--vk-space-sm) var(--vk-space-md);
+    text-align: left;
+    border-bottom: 1px solid var(--vk-color-border);
+  }
+
+  th {
+    font-weight: 600;
+    color: var(--vk-color-text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  tbody tr:nth-child(even) {
+    background: var(--vk-color-surface);
+  }
+
+  tbody tr:hover {
+    background: var(--vk-color-surface-2);
+  }
+
+  th[aria-sort] {
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  th[aria-sort="ascending"]::after {
+    content: ' ↑';
+  }
+
+  th[aria-sort="descending"]::after {
+    content: ' ↓';
+  }
+
+  /* Tag list */
+  [data-tags] {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--vk-space-xs);
+    padding: 0;
+    margin: 0;
+  }
+
+  [data-tags] li {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: var(--vk-radius-full);
+    background: var(--vk-color-surface-2);
+    color: var(--vk-color-text-muted);
+  }
+
+  /* Avatar */
+  img[data-avatar] {
+    border-radius: 50%;
+    object-fit: cover;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  img[data-avatar][data-size="sm"] {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  img[data-avatar][data-size="lg"] {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  img[data-avatar][data-size="xl"] {
+    width: 5rem;
+    height: 5rem;
+  }
+
+  /* Timeline */
+  ol[data-timeline] {
+    list-style: none;
+    position: relative;
+    padding-left: var(--vk-space-lg);
+  }
+
+  ol[data-timeline]::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--vk-color-border);
+  }
+
+  ol[data-timeline] li {
+    position: relative;
+    padding-bottom: var(--vk-space-lg);
+  }
+
+  ol[data-timeline] li::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--vk-space-lg) - 4px);
+    top: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--vk-color-accent);
+    border: 2px solid var(--vk-color-bg);
+  }
+
+}

@@ -1,0 +1,19 @@
+/* vanillacss — a classless CSS framework with dark/light theme support */
+/* https://github.com/nicuxyz/vanillakit */
+
+@layer vanillacss.reset, vanillacss.tokens, vanillacss.base, vanillacss.typography,
+       vanillacss.layout, vanillacss.nav, vanillacss.buttons, vanillacss.forms,
+       vanillacss.feedback, vanillacss.data, vanillacss.components, vanillacss.utilities;
+
+@import "./reset.css";
+@import "./tokens.css";
+@import "./base.css";
+@import "./typography.css";
+@import "./layout.css";
+@import "./nav.css";
+@import "./buttons.css";
+@import "./forms.css";
+@import "./feedback.css";
+@import "./data.css";
+@import "./components.css";
+@import "./utilities.css";

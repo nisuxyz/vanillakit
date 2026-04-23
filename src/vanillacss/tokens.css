@@ -1,0 +1,138 @@
+@layer vanillacss.tokens {
+
+  :root {
+    /* Palette — raw HSL channels (use with hsl() wrapper) */
+    --vk-gray-0: 36 10% 98%;
+    --vk-gray-1: 36 8% 94%;
+    --vk-gray-2: 240 6% 85%;
+    --vk-gray-3: 240 4% 70%;
+    --vk-gray-4: 255 2% 55%;
+    --vk-gray-5: 240 4% 35%;
+    --vk-gray-6: 240 8% 22%;
+    --vk-gray-7: 240 8% 14%;
+    --vk-gray-8: 240 8% 10%;
+    --vk-gray-9: 240 8% 5%;
+
+    /* Accent colors */
+    --vk-gold: 47 78% 59%;
+    --vk-green: 151 76% 62%;
+    --vk-yellow: 45 90% 58%;
+    --vk-red: 0 76% 62%;
+    --vk-blue: 225 76% 62%;
+    --vk-purple: 270 60% 62%;
+
+    /* Semantic aliases — light theme defaults */
+    --vk-color-bg: hsl(var(--vk-gray-0));
+    --vk-color-surface: hsl(var(--vk-gray-1));
+    --vk-color-surface-2: hsl(var(--vk-gray-2));
+    --vk-color-surface-3: hsl(var(--vk-gray-3));
+    --vk-color-border: hsl(var(--vk-gray-2));
+    --vk-color-text: hsl(var(--vk-gray-8));
+    --vk-color-text-muted: hsl(var(--vk-gray-4));
+    --vk-color-link: hsl(var(--vk-gold));
+    --vk-color-accent: hsl(var(--vk-gold));
+    --vk-color-accent-dim: hsl(var(--vk-gold) / 0.18);
+    --vk-color-danger: hsl(var(--vk-red));
+    --vk-color-danger-dim: hsl(var(--vk-red) / 0.12);
+    --vk-color-success: hsl(var(--vk-green));
+    --vk-color-success-dim: hsl(var(--vk-green) / 0.12);
+    --vk-color-warning: hsl(var(--vk-yellow));
+    --vk-color-warning-dim: hsl(var(--vk-yellow) / 0.12);
+    --vk-color-info: hsl(var(--vk-blue));
+    --vk-color-info-dim: hsl(var(--vk-blue) / 0.12);
+
+    /* Typography */
+    --vk-font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --vk-font-mono: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+    --vk-font-size-sm: 0.875rem;
+    --vk-font-size-base: 1rem;
+    --vk-font-size-lg: 1.125rem;
+    --vk-font-size-xl: 1.25rem;
+    --vk-font-size-2xl: 1.5rem;
+    --vk-font-size-3xl: 2rem;
+    --vk-font-size-4xl: 2.5rem;
+    --vk-line-height: 1.6;
+    --vk-line-height-tight: 1.2;
+
+    /* Spacing */
+    --vk-space-xs: 0.25rem;
+    --vk-space-sm: 0.5rem;
+    --vk-space-md: 1rem;
+    --vk-space-lg: 1.5rem;
+    --vk-space-xl: 2.5rem;
+    --vk-space-2xl: 4rem;
+
+    /* Radii */
+    --vk-radius-sm: 4px;
+    --vk-radius-md: 8px;
+    --vk-radius-lg: 12px;
+    --vk-radius-full: 9999px;
+
+    /* Shadows */
+    --vk-shadow-sm: 0 1px 3px hsl(0 0% 0% / 0.08);
+    --vk-shadow-md: 0 4px 12px hsl(0 0% 0% / 0.1);
+    --vk-shadow-lg: 0 8px 30px hsl(0 0% 0% / 0.12);
+
+    /* Transitions */
+    --vk-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+    --vk-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* Z-index scale */
+    --vk-z-dropdown: 100;
+    --vk-z-sticky: 200;
+    --vk-z-modal: 300;
+    --vk-z-toast: 400;
+
+    /* Config */
+    --vk-font-size-root: 100%;
+    --vk-transition-speed: 0.15s;
+    --vk-transition-speed-slow: 0.2s;
+    --vk-animation-speed: 0.2s;
+    --vk-container-max-width: 72rem;
+    --vk-sidebar-width: 200px;
+
+    color-scheme: light;
+  }
+
+  /* Auto dark mode */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --vk-color-bg: hsl(var(--vk-gray-9));
+      --vk-color-surface: hsl(var(--vk-gray-8));
+      --vk-color-surface-2: hsl(var(--vk-gray-7));
+      --vk-color-surface-3: hsl(240 8% 18%);
+      --vk-color-border: hsl(240 12% 19%);
+      --vk-color-text: hsl(var(--vk-gray-0));
+      --vk-color-text-muted: hsl(var(--vk-gray-4));
+
+      color-scheme: dark;
+    }
+  }
+
+  /* Manual dark mode override */
+  [data-theme="dark"] {
+    --vk-color-bg: hsl(var(--vk-gray-9));
+    --vk-color-surface: hsl(var(--vk-gray-8));
+    --vk-color-surface-2: hsl(var(--vk-gray-7));
+    --vk-color-surface-3: hsl(240 8% 18%);
+    --vk-color-border: hsl(240 12% 19%);
+    --vk-color-text: hsl(var(--vk-gray-0));
+    --vk-color-text-muted: hsl(var(--vk-gray-4));
+
+    color-scheme: dark;
+  }
+
+  /* Manual light mode override */
+  [data-theme="light"] {
+    --vk-color-bg: hsl(var(--vk-gray-0));
+    --vk-color-surface: hsl(var(--vk-gray-1));
+    --vk-color-surface-2: hsl(var(--vk-gray-2));
+    --vk-color-surface-3: hsl(var(--vk-gray-3));
+    --vk-color-border: hsl(var(--vk-gray-2));
+    --vk-color-text: hsl(var(--vk-gray-8));
+    --vk-color-text-muted: hsl(var(--vk-gray-4));
+
+    color-scheme: light;
+  }
+
+}

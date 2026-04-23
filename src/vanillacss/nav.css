@@ -1,0 +1,93 @@
+@layer vanillacss.nav {
+
+  nav {
+    display: flex;
+    gap: var(--vk-space-xs);
+    font-size: var(--vk-font-size-sm);
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: var(--vk-space-xs);
+    padding: 0;
+    margin: 0;
+  }
+
+  nav a {
+    text-decoration: none;
+    padding: var(--vk-space-xs) var(--vk-space-sm);
+    border-radius: var(--vk-radius-sm);
+    color: var(--vk-color-text-muted);
+    font-weight: 500;
+    transition: color var(--vk-transition-speed), background var(--vk-transition-speed);
+    letter-spacing: 0.02em;
+  }
+
+  nav a:hover {
+    color: var(--vk-color-text);
+    background: var(--vk-color-surface);
+    text-decoration: none;
+    filter: none;
+  }
+
+  nav a[aria-current="page"] {
+    color: var(--vk-color-accent);
+    font-weight: 600;
+    background: var(--vk-color-accent-dim);
+  }
+
+  /* Breadcrumb */
+  nav[aria-label="breadcrumb"] ol {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: var(--vk-space-xs);
+    padding: 0;
+    margin: 0;
+  }
+
+  nav[aria-label="breadcrumb"] li+li::before {
+    content: '/';
+    color: var(--vk-color-text-muted);
+    margin-right: var(--vk-space-xs);
+  }
+
+  nav[aria-label="breadcrumb"] a {
+    color: var(--vk-color-text-muted);
+  }
+
+  nav[aria-label="breadcrumb"] li:last-child a {
+    color: var(--vk-color-text);
+    font-weight: 600;
+    pointer-events: none;
+  }
+
+  /* Pagination */
+  nav[aria-label="pagination"] ul {
+    list-style: none;
+    display: flex;
+    gap: 2px;
+    padding: 0;
+    margin: 0;
+  }
+
+  nav[aria-label="pagination"] a,
+  nav[aria-label="pagination"] span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--vk-radius-sm);
+    text-decoration: none;
+  }
+
+  nav[aria-label="pagination"] [aria-current="page"] {
+    background: var(--vk-color-accent);
+    color: white;
+    font-weight: 600;
+  }
+
+}

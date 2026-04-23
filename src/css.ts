@@ -1,36 +1,32 @@
-/** @type {number} */
 let cssCounter = 0;
-/** @type {CSSStyleSheet} */
-const cssSheet = new CSSStyleSheet();
+const cssSheet: CSSStyleSheet = new CSSStyleSheet();
 document.adoptedStyleSheets = [...document.adoptedStyleSheets, cssSheet];
 
-/** @returns {string} */
-function _cssId() {
+function _cssId(): string {
   return "v-" + (cssCounter++).toString(36);
 }
 
-/**
- * @param {string[]} rules
- */
-function _insertRules(rules) {
+function _insertRules(rules: string[]): void {
   for (const r of rules) {
     const t = r.trim();
     if (!t) continue;
     try {
       cssSheet.insertRule(t, cssSheet.cssRules.length);
-    } catch (/** @type {*} */ e) {
-      console.warn("[css] Invalid rule:", e.message, "→", t.slice(0, 120));
+    } catch (e) {
+      console.warn(
+        "[css] Invalid rule:",
+        (e as Error).message,
+        "→",
+        t.slice(0, 120),
+      );
     }
   }
 }
 
-/**
- * Scoped CSS tagged template. Returns a unique class name.
- * @param {TemplateStringsArray} strings
- * @param {...(string | number)} values
- * @returns {string}
- */
-export function css(strings, ...values) {
+export function css(
+  strings: TemplateStringsArray,
+  ...values: (string | number)[]
+): string {
   let raw = "";
   for (let i = 0; i < strings.length; i++) {
     raw += strings[i];
@@ -41,13 +37,10 @@ export function css(strings, ...values) {
   return cn;
 }
 
-/**
- * Creates a scoped @keyframes rule. Returns the animation name.
- * @param {TemplateStringsArray} strings
- * @param {...(string | number)} values
- * @returns {string}
- */
-export function keyframes(strings, ...values) {
+export function keyframes(
+  strings: TemplateStringsArray,
+  ...values: (string | number)[]
+): string {
   let raw = "";
   for (let i = 0; i < strings.length; i++) {
     raw += strings[i];
@@ -58,20 +51,17 @@ export function keyframes(strings, ...values) {
   return name;
 }
 
-/**
- * Injects global (unscoped) CSS rules.
- * @param {TemplateStringsArray} strings
- * @param {...(string | number)} values
- * @returns {void}
- */
-export function globalCss(strings, ...values) {
+export function globalCss(
+  strings: TemplateStringsArray,
+  ...values: (string | number)[]
+): void {
   let raw = "";
   for (let i = 0; i < strings.length; i++) {
     raw += strings[i];
     if (i < values.length) raw += values[i];
   }
   const lines = raw.split("\n");
-  const rest = [];
+  const rest: string[] = [];
   for (const line of lines) {
     const t = line.trim();
     if (t.startsWith("@import ")) {
@@ -91,22 +81,12 @@ export function globalCss(strings, ...values) {
   _insertRules(_parseTopLevel(rest.join("\n")));
 }
 
-/**
- * Joins class names, filtering out falsy values.
- * @param {...(string | false | null | undefined | 0)} args
- * @returns {string}
- */
-export function cx(...args) {
+export function cx(...args: (string | false | null | undefined | 0)[]): string {
   return args.filter(Boolean).join(" ");
 }
 
-/**
- * @param {string} text
- * @returns {string[]}
- */
-function _parseTopLevel(text) {
-  /** @type {string[]} */
-  const rules = [];
+function _parseTopLevel(text: string): string[] {
+  const rules: string[] = [];
   let depth = 0;
   let cur = "";
   let inStr = false;
@@ -141,32 +121,22 @@ function _parseTopLevel(text) {
   return rules;
 }
 
-/**
- * @param {string} cssText
- * @param {string} rootSel
- * @returns {string[]}
- */
-function _compileScoped(cssText, rootSel) {
+function _compileScoped(cssText: string, rootSel: string): string[] {
   const ast = _parseBlocks(cssText);
-  /** @type {string[]} */
-  const rules = [];
+  const rules: string[] = [];
   _flattenNode(ast, rootSel, rules);
   return rules;
 }
 
-/**
- * @typedef {{ selector: string; declarations: string; children: CssNode[] }} CssNode
- */
+interface CssNode {
+  selector: string;
+  declarations: string;
+  children: CssNode[];
+}
 
-/**
- * @param {string} text
- * @returns {CssNode}
- */
-function _parseBlocks(text) {
-  /** @type {CssNode} */
-  const root = { declarations: "", children: [], selector: "" };
-  /** @type {CssNode[]} */
-  const stack = [root];
+function _parseBlocks(text: string): CssNode {
+  const root: CssNode = { declarations: "", children: [], selector: "" };
+  const stack: CssNode[] = [root];
   let cur = "";
   let inStr = false;
   let sCh = "";
@@ -187,7 +157,7 @@ function _parseBlocks(text) {
       const raw = cur.trim();
       cur = "";
       const lastSemi = raw.lastIndexOf(";");
-      let selector;
+      let selector: string;
       if (lastSemi !== -1) {
         const decls = raw.slice(0, lastSemi + 1).trim();
         if (decls) {
@@ -198,8 +168,7 @@ function _parseBlocks(text) {
       } else {
         selector = raw;
       }
-      /** @type {CssNode} */
-      const node = { selector, declarations: "", children: [] };
+      const node: CssNode = { selector, declarations: "", children: [] };
       stack[stack.length - 1].children.push(node);
       stack.push(node);
     } else if (ch === "}") {
@@ -215,17 +184,11 @@ function _parseBlocks(text) {
     }
   }
   const leftover = cur.trim();
-  if (leftover)
-    root.declarations += (root.declarations ? " " : "") + leftover;
+  if (leftover) root.declarations += (root.declarations ? " " : "") + leftover;
   return root;
 }
 
-/**
- * @param {CssNode} node
- * @param {string} ctx
- * @param {string[]} rules
- */
-function _flattenNode(node, ctx, rules) {
+function _flattenNode(node: CssNode, ctx: string, rules: string[]): void {
   if (node.declarations) rules.push(`${ctx} { ${node.declarations} }`);
   for (const child of node.children) {
     const sel = child.selector;
@@ -233,7 +196,7 @@ function _flattenNode(node, ctx, rules) {
       if (child.declarations) rules.push(`${ctx} { ${child.declarations} }`);
       for (const gc of child.children) _flattenNode(gc, ctx, rules);
     } else if (/^@(media|supports|container|layer)\b/.test(sel)) {
-      const inner = [];
+      const inner: string[] = [];
       if (child.declarations) inner.push(`${ctx} { ${child.declarations} }`);
       for (const gc of child.children) _flattenNode(gc, ctx, inner);
       if (inner.length) rules.push(`${sel} { ${inner.join(" ")} }`);

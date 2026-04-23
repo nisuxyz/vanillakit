@@ -38,15 +38,15 @@ export default defineConfig({
     reportCompressedSize: true,
   },
   plugins: [
-    compression({
-      algorithms: [
-        defineAlgorithm('gzip', { level: 9 }),
-        defineAlgorithm('brotliCompress', {
-          params: {
-            [zlib.constants.BROTLI_PARAM_QUALITY]: 11
-          }
-        })
-      ]
-    })
+    // compression({
+    //   algorithms: [
+    //     defineAlgorithm('gzip', { level: 9 }),
+    //     defineAlgorithm('brotliCompress', {
+    //       params: {
+    //         [zlib.constants.BROTLI_PARAM_QUALITY]: 11
+    //       }
+    //     })
+    //   ]
+    // })
   ],
 });
