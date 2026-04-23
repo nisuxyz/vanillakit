@@ -81,23 +81,22 @@ export function AboutPage() {
     <div>
       ${modules.map(
         (m) =>
-          html`<article
-            data-card
-            style="display:flex;align-items:center;gap:16px;margin-bottom:10px;"
-          >
-            <div
-              class=${moduleIcon}
-              style=${`background: ${m.color}20; color: ${m.color};`}
-            >
-              ${m.icon}
-            </div>
-            <div style="flex:1;">
-              <strong style="font-family:var(--vk-font-mono);font-size:0.9rem;"
-                >${m.name}</strong
+          html`<article data-card style="margin-bottom:10px;">
+            <div style="display:flex;align-items:center;gap:16px;">
+              <div
+                class=${moduleIcon}
+                style=${`background: ${m.color}20; color: ${m.color};`}
               >
-              <small>${m.desc}</small>
+                ${m.icon}
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:2px;">
+                <strong style="font-family:var(--vk-font-mono);font-size:0.9rem;"
+                  >${m.name}</strong
+                >
+                <small>${m.desc}</small>
+              </div>
+              <span data-badge>${m.lines}</span>
             </div>
-            <span data-badge>${m.lines}</span>
           </article>`,
       )}
     </div>
