@@ -1,7 +1,9 @@
 import { describe, test, expect, beforeEach } from "bun:test";
-import { currentPath, routeParams, navigate, createRouter, navLink } from "../src/router.js";
+import { currentPath, routeParams, navigate, initRouter, createRouter, navLink } from "../src/router.js";
 
 beforeEach(() => {
+  // Reset to hash mode
+  initRouter({ mode: "hash" });
   window.location.hash = "";
   currentPath("/");
   routeParams({});
@@ -245,5 +247,80 @@ describe("navLink", () => {
     document.body.append(link);
     link.click();
     expect(window.location.hash).toBe("#/about");
+  });
+});
+
+// ─────────────────────────────────────────────
+// History API mode (initRouter)
+// ─────────────────────────────────────────────
+describe("initRouter – history mode", () => {
+  beforeEach(() => {
+    initRouter({ mode: "history" });
+    currentPath("/");
+    routeParams({});
+    document.body.innerHTML = "";
+  });
+
+  test("navigate() uses pushState and updates currentPath", () => {
+    navigate("/about");
+    expect(currentPath()).toBe("/about");
+  });
+
+  test("popstate event updates currentPath", () => {
+    // Simulate browser back: update the URL then fire popstate
+    window.location.href = "http://localhost/home";
+    window.dispatchEvent(new PopStateEvent("popstate", { state: {} }));
+    expect(currentPath()).toBe("/home");
+  });
+
+  test("navLink sets href without hash prefix", () => {
+    const link = navLink("/docs", "Docs");
+    expect(link.href).not.toContain("#");
+    expect(link.href).toContain("/docs");
+  });
+
+  test("navLink click navigates via navigate()", () => {
+    const link = navLink("/about", "About");
+    document.body.append(link);
+    link.click();
+    expect(currentPath()).toBe("/about");
+  });
+
+  test("createRouter renders matching route by pathname", () => {
+    currentPath("/");
+    const router = createRouter({
+      "/": () => {
+        const p = document.createElement("p");
+        p.textContent = "Home";
+        return p;
+      },
+      "/about": () => {
+        const p = document.createElement("p");
+        p.textContent = "About";
+        return p;
+      },
+    });
+    const container = router();
+    document.body.append(container);
+    expect(container.querySelector("p")?.textContent).toBe("Home");
+    navigate("/about");
+    expect(container.querySelector("p")?.textContent).toBe("About");
+  });
+});
+
+describe("initRouter – switching modes", () => {
+  test("switching back to hash mode re-attaches hashchange listener", () => {
+    initRouter({ mode: "history" });
+    initRouter({ mode: "hash" });
+    window.location.hash = "/switched";
+    window.dispatchEvent(new Event("hashchange"));
+    expect(currentPath()).toBe("/switched");
+  });
+
+  test("calling initRouter with same mode is a no-op", () => {
+    initRouter({ mode: "hash" });
+    window.location.hash = "/noop";
+    window.dispatchEvent(new Event("hashchange"));
+    expect(currentPath()).toBe("/noop");
   });
 });

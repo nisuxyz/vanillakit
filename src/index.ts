@@ -8,6 +8,7 @@ export {
   currentPath,
   routeParams,
   navigate,
+  initRouter,
   createRouter,
   navLink,
 } from "./router.js";

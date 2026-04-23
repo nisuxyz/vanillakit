@@ -4,7 +4,13 @@ import * as zlib from "zlib";
 
 export default defineConfig({
   root: "demo",
-  base: "./",
+  base: "/",
+  server: {
+    historyApiFallback: true,
+  },
+  preview: {
+    historyApiFallback: true,
+  },
   build: {
     outDir: "../docs",
     emptyOutDir: true,

@@ -23,7 +23,6 @@
     <div id="app" class="container"></div>
     <script type="module">
       import { App } from "./app.ts";
-      if (!window.location.hash) window.location.hash = "/";
       document.getElementById("app").append(App());
     </script>
   </body>

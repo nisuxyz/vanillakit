@@ -1,17 +1,51 @@
 import { signal, effect } from "./signal.js";
 import type { Signal } from "./signal.js";
 
+let _mode: "hash" | "history" = "hash";
+
 export const currentPath: Signal<string> = signal(
   window.location.hash.slice(1) || "/",
 );
 export const routeParams: Signal<Record<string, string>> = signal({});
 
-window.addEventListener("hashchange", () => {
+function _onHashChange() {
   currentPath(window.location.hash.slice(1) || "/");
-});
+}
+
+function _onPopState() {
+  currentPath(window.location.pathname || "/");
+}
+
+window.addEventListener("hashchange", _onHashChange);
+
+export function initRouter(config: { mode?: "hash" | "history" } = {}): void {
+  const mode = config.mode ?? "hash";
+  if (mode === _mode) return;
+
+  if (_mode === "hash") {
+    window.removeEventListener("hashchange", _onHashChange);
+  } else {
+    window.removeEventListener("popstate", _onPopState);
+  }
+
+  _mode = mode;
+
+  if (mode === "hash") {
+    currentPath(window.location.hash.slice(1) || "/");
+    window.addEventListener("hashchange", _onHashChange);
+  } else {
+    currentPath(window.location.pathname || "/");
+    window.addEventListener("popstate", _onPopState);
+  }
+}
 
 export function navigate(path: string): void {
-  window.location.hash = path;
+  if (_mode === "history") {
+    window.history.pushState({}, "", path);
+    currentPath(path);
+  } else {
+    window.location.hash = path;
+  }
 }
 
 export function createRouter(
@@ -63,7 +97,7 @@ export function createRouter(
 
 export function navLink(path: string, text: string): HTMLAnchorElement {
   const a = document.createElement("a");
-  a.href = "#" + path;
+  a.href = _mode === "history" ? path : "#" + path;
   a.textContent = text;
   effect(() => {
     const isActive =

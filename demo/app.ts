@@ -1,6 +1,7 @@
 import {
   html,
   css,
+  initRouter,
   createRouter,
   navLink,
   navigate,
@@ -11,6 +12,8 @@ import { HomePage } from "./pages/home.ts";
 import { ExamplesPage } from "./pages/examples.ts";
 import { AboutPage } from "./pages/about.ts";
 import { DocsPage } from "./pages/docs/index.ts";
+
+initRouter({ mode: "history" });
 
 const { theme, toggle } = themeToggle();
 
