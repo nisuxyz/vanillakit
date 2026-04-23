@@ -18,6 +18,7 @@ import {
 import { CodeJar } from "codejar";
 import { withLineNumbers } from "codejar-linenumbers";
 import Prism from "prismjs";
+import { transform } from "sucrase";
 
 // ── Styles ─────────────────────────────────────────────────
 const wrapperClass = css`
@@ -205,8 +206,19 @@ export function LiveEditor({
     outputContainer.innerHTML = "";
     err("");
 
-    const stripped = code.replace(/^import\s+.*$/gm, "").trim();
-    if (!stripped) return;
+    const withoutImports = code.replace(/^import\s+.*$/gm, "").trim();
+    if (!withoutImports) return;
+
+    let stripped: string;
+    try {
+      stripped = transform(withoutImports, {
+        transforms: ["typescript"],
+        disableESTransforms: true,
+      }).code;
+    } catch (e: any) {
+      err(e?.message ?? String(e));
+      return;
+    }
 
     try {
       // Intercept document.body.append / appendChild to capture output

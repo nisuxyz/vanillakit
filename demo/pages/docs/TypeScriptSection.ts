@@ -1,7 +1,7 @@
 import { html } from "../../../src";
 import { LiveEditor } from "../../components/LiveEditor";
 import { code } from "../../highlight";
-import { TYPED_COUNTER } from "../../snippets";
+import { COUNTER } from "../../snippets";
 
 // ── Section renderers ──────────────────────────────────────
 export function TypeScriptSection() {
@@ -15,7 +15,7 @@ export function TypeScriptSection() {
       types directly:
     </p>
     ${LiveEditor({
-      source: TYPED_COUNTER,
+      source: COUNTER,
       label: "Counter component with TypeScript types",
     })}
     ${code(

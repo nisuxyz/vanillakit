@@ -539,9 +539,9 @@ console.log(greeting);
   <details data-dropdown>
     <summary><button>Options ▾</button></summary>
     <ul>
-      <li><a href="#">Profile</a></li>
-      <li><a href="#">Settings</a></li>
-      <li><a href="#">Sign out</a></li>
+      <li><a href="javascript:void(0)">Profile</a></li>
+      <li><a href="javascript:void(0)">Settings</a></li>
+      <li><a href="javascript:void(0)">Sign out</a></li>
     </ul>
   </details>
 \`);`,
@@ -556,17 +556,32 @@ console.log(greeting);
     </p>
 
     ${LiveEditor({
-      source: `document.body.append(html\`
-  <dialog open style="position:relative;inset:auto;margin:0;max-width:100%">
-    <header><h4>Confirm delete</h4></header>
-    <p>This will permanently delete the item. This action cannot be undone.</p>
-    <footer>
-      <button data-style-variant="ghost">Cancel</button>
-      <button data-color-variant="danger">Delete</button>
-    </footer>
-  </dialog>
-\`);`,
-      label: "Static preview (open)",
+      source: `
+  const openDialog = () =>
+    document.querySelector<HTMLDialogElement>("#dialogTest")?.showModal();
+  const closeDialog = () =>
+    document.querySelector<HTMLDialogElement>("#dialogTest")?.close();
+
+  const Dialog = () => html\`
+    <dialog id="dialogTest">
+      <header><h4>Confirm delete</h4></header>
+      <p>
+        This will permanently delete the item. This action cannot be undone.
+      </p>
+      <footer>
+        <button data-style-variant="ghost" onclick=\${closeDialog}>
+          Cancel
+        </button>
+        <button data-color-variant="danger" onclick=\${closeDialog}>
+          Delete
+        </button>
+      </footer>
+    </dialog>
+
+    <button onclick=\${openDialog}>Open</button>
+  \`;
+document.body.append(Dialog());`,
+      label: "Modal dialog",
     })}
     ${code(
       `// Open as modal (with backdrop)
@@ -605,8 +620,8 @@ dialog.close();`,
     ${LiveEditor({
       source: `document.body.append(html\`
   <div style="display:flex;gap:.75rem;align-items:center">
-    <button popovertarget="vk-pop-demo">Show tip ▾</button>
-    <div popover id="vk-pop-demo" style="margin:0;top:auto;left:auto">
+    <button popovertarget="vk-pop-demo" style="anchor-name:--vk-pop-demo">Show tip ▾</button>
+    <div popover id="vk-pop-demo" style="margin:4px 0 0;position:fixed;position-anchor:--vk-pop-demo;top:anchor(bottom);left:anchor(left)">
       <strong>Quick tip</strong>
       <p>Use CSS sub-layers to override styles without specificity battles.</p>
     </div>

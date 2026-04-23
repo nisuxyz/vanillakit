@@ -1,20 +1,20 @@
+// export const COUNTER = `
+// import { signal, html } from "vanillakit";
+
+// const Counter = (props = { initial: 0 }) => {
+//   const count = signal(props.initial);
+//   return html\`
+//     <div style="display: flex; flex-direction: column; gap: 1rem;">
+//       Count: \${count}
+//       <button onclick=\${() => count(n => n + 1)}>+1</button>
+//     </div>
+//   \`;
+// };
+
+// document.body.append(Counter({ initial: 10 }));
+// `;
+
 export const COUNTER = `
-import { signal, html } from "vanillakit";
-
-const Counter = (props = { initial: 0 }) => {
-  const count = signal(props.initial);
-  return html\`
-    <div style="display: flex; flex-direction: column; gap: 1rem;">
-      Count: \${count}
-      <button onclick=\${() => count(n => n + 1)}>+1</button>
-    </div>
-  \`;
-};
-
-document.body.append(Counter({ initial: 10 }));
-`;
-
-export const TYPED_COUNTER = `
 import { signal, html, type VanillaElement } from "vanillakit";
 
 interface CounterProps {
@@ -22,7 +22,7 @@ interface CounterProps {
 }
 
 const Counter = (props: CounterProps = { initial: 0 }): VanillaElement => {
-  const count = signal<number>(props.initial);
+  const count = signal(props.initial); // Signal<number>
   return html\`
     <div style="display: flex; flex-direction: column; gap: 1rem;">
       Count: \${count}
@@ -35,9 +35,14 @@ document.body.append(Counter({ initial: 10 }));
 `;
 
 export const PROPS = `
-import { html, css } from "vanillakit";
+import { html, css, type VanillaElement } from "vanillakit";
 
-const UserComponent = ({ name, role }) => {
+interface UserComponentProps {
+  name: string;
+  role: string;
+}
+
+const UserComponent = ({ name, role }: UserComponentProps): VanillaElement => {
   return html\`
     <article>
       <h3 style="margin:0 0 4px; font-size:0.95rem;">\${name}</h3>
@@ -158,6 +163,7 @@ const ReactiveComponent = () => {
     <div>
       <h2>Count: \${count}</h2>
       <h3>Double: \${double}</h3>
+      <h3>Triple: \${() => count() * 3}</h3>
       <button onclick=\${() => count(count() + 1)}>Increment</button>
       
       <h2>Todos:</h2>

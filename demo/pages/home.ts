@@ -11,10 +11,36 @@ const EmphasisCard = (props = { dd: "1 billion", dt: "That's big!" }) =>
   </article>`;
 
 const EMPHASES = signal([
-  { dd: "<7", dt: "kB" },
+  { dd: "5.55", dt: "kB (brotli)" },
   { dd: "0", dt: "Deps" },
   { dd: "5", dt: "Modules" },
 ]);
+
+const DialogTest = () => {
+  const openDialog = () =>
+    document.querySelector<HTMLDialogElement>("#dialogTest")?.showModal();
+  const closeDialog = () =>
+    document.querySelector<HTMLDialogElement>("#dialogTest")?.close();
+
+  return html`
+    <dialog id="dialogTest">
+      <header><h4>Confirm delete</h4></header>
+      <p>
+        This will permanently delete the item. This action cannot be undone.
+      </p>
+      <footer>
+        <button data-style-variant="ghost" onclick=${closeDialog}>
+          Cancel
+        </button>
+        <button data-color-variant="danger" onclick=${closeDialog}>
+          Delete
+        </button>
+      </footer>
+    </dialog>
+
+    <button onclick=${openDialog}>Open</button>
+  `;
+};
 
 // ── Main page ───────────────────────────────────────────────
 export function HomePage() {
@@ -23,7 +49,8 @@ export function HomePage() {
       <h1>Build UIs with <span class="text-accent">plain JavaScript.</span></h1>
       <p>
         Minimal and expressive utilities that complement vanilla JS to build
-        modern, reactive websites.
+        modern, reactive websites. Typescript-friendly, zero dependencies, no
+        build step required.
       </p>
       <div>
         <a href="#/docs" role="button" data-color-variant="primary">
@@ -39,6 +66,26 @@ export function HomePage() {
         </a>
       </div>
     </section>
+
+    <hr />
+    <h4 class="text-accent">See it in action</h4>
+    <p>
+      Check out the interactive demos — a full todo app, reactive object
+      explorer, and stress tests for signals and keyed lists.
+    </p>
+    <div data-grid data-cols="3">
+      <a href="#/tasks" role="button" data-style-variant="outline">
+        Todo app
+      </a>
+      <a href="#/playground" role="button" data-style-variant="outline">
+        Playground
+      </a>
+      <a href="#/stress" role="button" data-style-variant="outline">
+        Stress test
+      </a>
+    </div>
+
+    <hr />
 
     <div data-grid data-cols="3">
       ${each(
@@ -84,13 +131,6 @@ export function HomePage() {
           active classes, zero config.
         </p>
       </article>
-      <article data-card data-hover="glow">
-        <h5 style="font-family:var(--vk-font-mono);">📦 No build step</h5>
-        <p>
-          Works with a plain &lt;script type="module"&gt;. Use a bundler if you
-          want — but you don't have to.
-        </p>
-      </article>
     </div>
     <hr />
     <h4 class="text-accent">Quick example</h4>
@@ -99,22 +139,5 @@ export function HomePage() {
       source: COUNTER,
       label: "Try editing the code!",
     })}
-    <hr />
-    <h4 class="text-accent">See it in action</h4>
-    <p>
-      Check out the interactive demos — a full todo app, reactive object
-      explorer, and stress tests for signals and keyed lists.
-    </p>
-    <div data-grid data-cols="3">
-      <a href="#/tasks" role="button" data-style-variant="outline">
-        Todo app
-      </a>
-      <a href="#/playground" role="button" data-style-variant="outline">
-        Playground
-      </a>
-      <a href="#/stress" role="button" data-style-variant="outline">
-        Stress test
-      </a>
-    </div>
   </div>`;
 }

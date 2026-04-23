@@ -5,7 +5,7 @@ import {
   navLink,
   navigate,
   themeToggle,
-} from "../src/index.js";
+} from "../src/index.ts";
 import { logoClass } from "./styles.ts";
 import { HomePage } from "./pages/home.ts";
 import { ExamplesPage } from "./pages/examples.ts";
