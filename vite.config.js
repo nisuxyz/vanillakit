@@ -6,7 +6,7 @@ import * as path from "path";
 
 export default defineConfig({
   root: "demo",
-  base: "/",
+  base: "/vanillakit/",
   server: {
     historyApiFallback: true,
   },
