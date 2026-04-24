@@ -4,7 +4,23 @@ import { code } from "../../highlight";
 export function RouterModuleSection() {
   return html`<section>
     <h2>router.js</h2>
-    <p>Hash-based SPA router. Routes are functions returning DOM nodes.</p>
+    <p>
+      SPA router supporting both hash and History API modes. Routes are
+      functions returning DOM nodes.
+    </p>
+
+    <h3>initRouter(config)</h3>
+    <p>
+      Configures the routing mode. Call once before rendering. Defaults to
+      <code>"hash"</code> mode if not called.
+    </p>
+    ${code(`import { initRouter } from "vanillakit";
+
+// Hash mode (default): URLs like /#/about
+initRouter({ mode: "hash" });
+
+// History mode: URLs like /about (requires server-side fallback)
+initRouter({ mode: "history" });`)}
 
     <h3>createRouter(routeMap)</h3>
     <p>

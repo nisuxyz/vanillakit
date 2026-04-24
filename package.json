@@ -21,6 +21,7 @@
   "dependencies": {
     "codejar": "^4.3.0",
     "codejar-linenumbers": "^1.0.1",
+    "picomatch": "^4.0.4",
     "prismjs": "^1.30.0",
     "sucrase": "^3.35.1",
     "vite-plugin-compression2": "^2.5.3"

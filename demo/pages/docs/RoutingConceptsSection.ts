@@ -5,10 +5,25 @@ export function RoutingConceptsSection() {
   return html`<section>
     <h2>Routing</h2>
     <p>
-      vanillakit includes a hash-based SPA router. Routes map path patterns to
-      functions that return DOM nodes. The router swaps content reactively when
-      the hash changes.
+      vanillakit includes an SPA router with two modes: <strong>hash</strong>{" "}
+      (default, e.g. <code>/#/about</code>) and <strong>history</strong> (clean
+      URLs via the History API, e.g. <code>/about</code>). Routes map path
+      patterns to functions that return DOM nodes. The router swaps content
+      reactively when the location changes.
     </p>
+
+    <h3>Choosing a mode</h3>
+    <p>
+      Call <code>initRouter</code> once at startup before rendering. Omit it to
+      use the default hash mode.
+    </p>
+    ${code(`import { initRouter } from "vanillakit";
+
+// Hash mode (default) — no server config needed
+initRouter({ mode: "hash" });
+
+// History mode — requires the server to serve index.html for all routes
+initRouter({ mode: "history" });`)}
 
     <h3>Basic setup</h3>
     ${code(`import { html, createRouter, navLink, css } from "vanillakit";

@@ -1,6 +1,8 @@
 import { defineConfig } from "vite";
 import { compression, defineAlgorithm } from "vite-plugin-compression2";
 import * as zlib from "zlib";
+import * as fs from "fs";
+import * as path from "path";
 
 export default defineConfig({
   root: "demo",
@@ -44,6 +46,16 @@ export default defineConfig({
     reportCompressedSize: true,
   },
   plugins: [
+    {
+      name: "github-pages-404",
+      closeBundle() {
+        const outDir = path.resolve("docs");
+        fs.copyFileSync(
+          path.join(outDir, "index.html"),
+          path.join(outDir, "404.html"),
+        );
+      },
+    },
     // compression({
     //   algorithms: [
     //     defineAlgorithm('gzip', { level: 9 }),
