@@ -2,6 +2,7 @@ import { signal, effect } from "./signal.js";
 import type { Signal } from "./signal.js";
 
 let _mode: "hash" | "history" = "hash";
+let _base: string = "";
 
 export const currentPath: Signal<string> = signal(
   window.location.hash.slice(1) || "/",
@@ -13,13 +14,15 @@ function _onHashChange() {
 }
 
 function _onPopState() {
-  currentPath(window.location.pathname || "/");
+  currentPath(window.location.pathname.slice(_base.length) || "/");
 }
 
 window.addEventListener("hashchange", _onHashChange);
 
-export function initRouter(config: { mode?: "hash" | "history" } = {}): void {
+export function initRouter(config: { mode?: "hash" | "history"; base?: string } = {}): void {
   const mode = config.mode ?? "hash";
+  _base = (config.base ?? "").replace(/\/$/, "").replace(/^\/$/, "");
+
   if (mode === _mode) return;
 
   if (_mode === "hash") {
@@ -34,14 +37,14 @@ export function initRouter(config: { mode?: "hash" | "history" } = {}): void {
     currentPath(window.location.hash.slice(1) || "/");
     window.addEventListener("hashchange", _onHashChange);
   } else {
-    currentPath(window.location.pathname || "/");
+    currentPath(window.location.pathname.slice(_base.length) || "/");
     window.addEventListener("popstate", _onPopState);
   }
 }
 
 export function navigate(path: string): void {
   if (_mode === "history") {
-    window.history.pushState({}, "", path);
+    window.history.pushState({}, "", _base + path);
     currentPath(path);
   } else {
     window.location.hash = path;
@@ -97,7 +100,7 @@ export function createRouter(
 
 export function navLink(path: string, text: string): HTMLAnchorElement {
   const a = document.createElement("a");
-  a.href = _mode === "history" ? path : "#" + path;
+  a.href = _mode === "history" ? _base + path : "#" + path;
   a.textContent = text;
   effect(() => {
     const isActive =

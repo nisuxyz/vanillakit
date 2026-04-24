@@ -13,7 +13,7 @@ import { ExamplesPage } from "./pages/examples.ts";
 import { AboutPage } from "./pages/about.ts";
 import { DocsPage } from "./pages/docs/index.ts";
 
-initRouter({ mode: "history" });
+initRouter({ mode: "history", base: import.meta.env.BASE_URL });
 
 const { theme, toggle } = themeToggle();
 

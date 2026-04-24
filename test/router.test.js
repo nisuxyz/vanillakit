@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach } from "bun:test";
+import { describe, test, expect, beforeEach, afterEach } from "bun:test";
 import { currentPath, routeParams, navigate, initRouter, createRouter, navLink } from "../src/router.js";
 
 beforeEach(() => {
@@ -322,5 +322,52 @@ describe("initRouter – switching modes", () => {
     window.location.hash = "/noop";
     window.dispatchEvent(new Event("hashchange"));
     expect(currentPath()).toBe("/noop");
+  });
+});
+
+// ─────────────────────────────────────────────
+// History mode with base path
+// ─────────────────────────────────────────────
+describe("initRouter – history mode with base", () => {
+  beforeEach(() => {
+    initRouter({ mode: "history", base: "/vanillakit" });
+    currentPath("/");
+    routeParams({});
+    document.body.innerHTML = "";
+  });
+
+  afterEach(() => {
+    // Reset base so other tests are not affected
+    initRouter({ mode: "hash" });
+  });
+
+  test("navigate() pushes base-prefixed URL but currentPath is app-relative", () => {
+    navigate("/about");
+    expect(currentPath()).toBe("/about");
+    expect(window.location.pathname).toBe("/vanillakit/about");
+  });
+
+  test("popstate strips base prefix from pathname", () => {
+    window.history.pushState({}, "", "/vanillakit/docs");
+    window.dispatchEvent(new PopStateEvent("popstate", { state: {} }));
+    expect(currentPath()).toBe("/docs");
+  });
+
+  test("navLink href includes base prefix", () => {
+    const link = navLink("/docs", "Docs");
+    expect(link.href).toContain("/vanillakit/docs");
+    expect(link.href).not.toContain("#");
+  });
+
+  test("base with trailing slash is normalized", () => {
+    initRouter({ mode: "history", base: "/vanillakit/" });
+    navigate("/about");
+    expect(window.location.pathname).toBe("/vanillakit/about");
+  });
+
+  test("base '/' is treated as empty (no prefix)", () => {
+    initRouter({ mode: "history", base: "/" });
+    navigate("/about");
+    expect(window.location.pathname).toBe("/about");
   });
 });
