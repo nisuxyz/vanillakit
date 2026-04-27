@@ -1,19 +1,9 @@
 import * as VanillaKit from "../../src/index.js";
 import {
   signal,
-  computed,
   effect,
-  batch,
-  untrack,
-  reactive,
-  toRaw,
-  isReactive,
-  snapshot,
-  html,
   vkml,
-  each,
   css,
-  keyframes,
   globalCss,
   cx,
   article,
@@ -124,6 +114,181 @@ const editorClass = css`
   margin: 0;
   border-radius: 0;
 `;
+
+const liveEditorRootClass = css`
+  position: relative;
+`;
+
+const backdropClass = css`
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 10, 16, 0.58);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 79;
+`;
+
+const backdropVisibleClass = css`
+  opacity: 1;
+  pointer-events: auto;
+`;
+
+const shellClass = css`
+  position: relative;
+  padding: 0;
+  padding-inline: 0;
+  margin-bottom: 2rem;
+  overflow: hidden;
+`;
+
+const fullscreenShellClass = css`
+  position: fixed;
+  inset: 2rem;
+  z-index: 80;
+  width: auto;
+  max-width: none;
+  height: calc(100vh - 4rem);
+  margin: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+`;
+
+const workspaceClass = css`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 0;
+  padding: 0;
+`;
+
+const workspaceSplitClass = css`
+  height: 100%;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+  @media (max-width: 960px) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  }
+`;
+
+const paneClass = css`
+  min-width: 0;
+  min-height: 0;
+`;
+
+const fullscreenPaneClass = css`
+  height: 100%;
+`;
+
+const codePaneClass = css`
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--editor-bg);
+`;
+
+const editorsViewportClass = css`
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  background: var(--editor-bg);
+`;
+
+const previewPaneClass = css`
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 18px 18px 78px;
+  border-top: 1px solid var(--vk-color-border);
+  background: var(--vk-color-bg);
+`;
+
+const previewPaneSplitClass = css`
+  border-top: none;
+  border-left: 1px solid var(--vk-color-border);
+
+  @media (max-width: 960px) {
+    border-left: none;
+    border-top: 1px solid var(--vk-color-border);
+  }
+`;
+
+const previewHeaderClass = css`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+`;
+
+const previewTitleClass = css`
+  font-family: var(--vk-font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--vk-color-accent);
+`;
+
+const previewBodyClass = css`
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+`;
+
+const previewOutputClass = css`
+  min-height: 100%;
+`;
+
+const controlsClass = css`
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const controlGroupClass = css`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px;
+  border: 1px solid var(--vk-color-border);
+  border-radius: 999px;
+  background: var(--editor-bg);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+  opacity: 0.98;
+`;
+
+const controlButtonClass = css`
+  border-radius: 999px;
+  white-space: nowrap;
+`;
+
+const fullscreenTabPickerClass = css`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const tabPickerButtonActiveClass = css`
+  background: var(--vk-color-accent);
+  color: white;
+  border-color: var(--vk-color-accent);
+`;
+
+const hiddenPaneClass = css`
+  display: none;
+`;
+
+type DisposableElement = HTMLElement & {
+  __v_disposers?: Array<() => void> | null;
+};
 
 // ── Sandbox ────────────────────────────────────────────────
 
@@ -294,8 +459,14 @@ export function LiveEditor({
   const mode = signal<string>(initialMode);
   const err = signal("");
   const modified = signal(false);
+  const fullscreen = signal(false);
+  const fullscreenLayout = signal<"split" | "tab">("split");
+  const fullscreenPanel = signal<"code" | "preview">("code");
   const outputContainer = document.createElement("div");
   let prevDisposers: (() => void)[] = [];
+  const manualDisposers: Array<() => void> = [];
+
+  outputContainer.className = previewOutputClass;
 
   function evaluate(code: string) {
     prevDisposers.forEach((d) => d());
@@ -443,6 +614,24 @@ export function LiveEditor({
     evaluate(editors[mode()].initialCode);
   });
 
+  const maximize = () => {
+    fullscreenPanel("code");
+    fullscreen(true);
+  };
+
+  const minimize = () => {
+    fullscreen(false);
+  };
+
+  const toggleFullscreenLayout = () => {
+    if (fullscreenLayout() === "split") {
+      fullscreenLayout("tab");
+      fullscreenPanel("code");
+      return;
+    }
+    fullscreenLayout("split");
+  };
+
   function reset() {
     const state = editors[mode()];
     state.jar.updateCode(state.initialCode);
@@ -459,89 +648,235 @@ export function LiveEditor({
     evaluate(state.sig());
   }
 
-  return article(
-    {
-      "data-card": true,
-      style:
-        "padding: 0; padding-inline: 0; margin-bottom: 2rem; overflow: hidden;",
-    },
-    variantNames.length > 1
-      ? div(
-          { class: tabsContainerClass },
-          ...variantNames.map((name) =>
-            vkml.button(
-              {
-                class: () =>
-                  cx(
-                    tabButtonClass,
-                    mode() === name ? tabButtonActiveClass : undefined,
-                  ),
-                onclick: () => switchMode(name),
-                style:
-                  "border-radius: var(--vk-radius-md) var(--vk-radius-md) 0 0; text-transform: uppercase;",
-              },
-              name,
-            ),
-          ),
-        )
-      : null,
-    div(
-      {
-        class: css`
-          padding-inline: 0;
-          margin-top: 0;
-        `,
-      },
-      () => {
-        // Toggle visibility via display instead of remounting nodes.
-        // Remounting breaks CodeJar's internal wrapper structure.
-        return null; // The real nodes are returned separately below
-      },
-      ...variantNames.map((name) => {
-        const el = editors[name].wrapper;
-        // Effect to toggle display
+  const editorsViewport = div(
+    { class: editorsViewportClass },
+    ...variantNames.map((name) => {
+      const el = editors[name].wrapper;
+      manualDisposers.push(
         effect(() => {
           el.style.display = mode() === name ? "block" : "none";
-        });
-        return el;
-      }),
-    ),
-    div(
-      header(
+        }),
+      );
+      return el;
+    }),
+  );
+
+  let previousBodyOverflow = "";
+  let bodyLocked = false;
+  manualDisposers.push(
+    effect(() => {
+      if (fullscreen()) {
+        if (!bodyLocked) {
+          previousBodyOverflow = document.body.style.overflow;
+          bodyLocked = true;
+        }
+        document.body.style.overflow = "hidden";
+        return;
+      }
+
+      if (bodyLocked) {
+        document.body.style.overflow = previousBodyOverflow;
+        bodyLocked = false;
+      }
+    }),
+  );
+
+  const handleKeydown = (event: KeyboardEvent) => {
+    if (event.key !== "Escape" || !fullscreen()) return;
+    event.preventDefault();
+    minimize();
+  };
+
+  document.addEventListener("keydown", handleKeydown);
+  manualDisposers.push(() => {
+    document.removeEventListener("keydown", handleKeydown);
+  });
+  manualDisposers.push(() => {
+    prevDisposers.forEach((dispose) => dispose());
+    prevDisposers = [];
+    if (bodyLocked) {
+      document.body.style.overflow = previousBodyOverflow;
+      bodyLocked = false;
+    }
+  });
+
+  const root = div(
+    { class: liveEditorRootClass },
+    div({
+      class: () =>
+        cx(backdropClass, fullscreen() ? backdropVisibleClass : undefined),
+      onclick: minimize,
+      "aria-hidden": true,
+    }),
+    article(
+      {
+        "data-card": true,
+        class: () =>
+          cx(shellClass, fullscreen() ? fullscreenShellClass : undefined),
+      },
+      div(
         {
-          style:
-            "display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;",
+          class: () =>
+            cx(
+              workspaceClass,
+              fullscreen() && fullscreenLayout() === "split"
+                ? workspaceSplitClass
+                : undefined,
+            ),
         },
         div(
           {
-            style:
-              "font-family: var(--vk-font-mono); font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--vk-color-accent);",
+            class: () =>
+              cx(
+                paneClass,
+                codePaneClass,
+                fullscreen() ? fullscreenPaneClass : undefined,
+                fullscreen() &&
+                  fullscreenLayout() === "tab" &&
+                  fullscreenPanel() !== "code"
+                  ? hiddenPaneClass
+                  : undefined,
+              ),
           },
-          "▶ " + label,
-        ),
-        () =>
-          modified()
-            ? button(
-                {
-                  "data-style-variant": "ghost",
-                  style: "padding: 2px 8px; font-size: 0.7rem;",
-                  onclick: reset,
-                },
-                "↺ reset",
+          variantNames.length > 1
+            ? div(
+                { class: tabsContainerClass },
+                ...variantNames.map((name) =>
+                  vkml.button(
+                    {
+                      class: () =>
+                        cx(
+                          tabButtonClass,
+                          mode() === name ? tabButtonActiveClass : undefined,
+                        ),
+                      onclick: () => switchMode(name),
+                      style:
+                        "border-radius: var(--vk-radius-md) var(--vk-radius-md) 0 0; text-transform: uppercase;",
+                    },
+                    name,
+                  ),
+                ),
               )
             : null,
+          editorsViewport,
+        ),
+        div(
+          {
+            class: () =>
+              cx(
+                paneClass,
+                previewPaneClass,
+                fullscreen() ? fullscreenPaneClass : undefined,
+                fullscreen() && fullscreenLayout() === "split"
+                  ? previewPaneSplitClass
+                  : undefined,
+                fullscreen() &&
+                  fullscreenLayout() === "tab" &&
+                  fullscreenPanel() !== "preview"
+                  ? hiddenPaneClass
+                  : undefined,
+              ),
+          },
+          header(
+            { class: previewHeaderClass },
+            div({ class: previewTitleClass }, "▶ ", label),
+            () =>
+              modified()
+                ? button(
+                    {
+                      "data-style-variant": "ghost",
+                      style: "padding: 2px 8px; font-size: 0.7rem;",
+                      onclick: reset,
+                    },
+                    "Reset",
+                  )
+                : null,
+          ),
+          div(
+            { class: previewBodyClass },
+            () =>
+              err()
+                ? vkml.pre(
+                    {
+                      style:
+                        "color: var(--vk-color-danger, #e45); margin: 0 0 12px; white-space: pre-wrap; font-family: var(--vk-font-mono); font-size: 0.8rem;",
+                    },
+                    err(),
+                  )
+                : null,
+            outputContainer,
+          ),
+        ),
       ),
-      () =>
-        err()
-          ? vkml.pre(
-              {
-                style:
-                  "color: var(--vk-color-danger, #e45); margin: 0; white-space: pre-wrap; font-family: var(--vk-font-mono); font-size: 0.8rem;",
-              },
-              err(),
-            )
-          : null,
-      outputContainer,
+      div(
+        { class: controlsClass },
+        div({ class: controlGroupClass }, () =>
+          fullscreen()
+            ? [
+                button(
+                  {
+                    "data-style-variant": "outline",
+                    class: controlButtonClass,
+                    onclick: toggleFullscreenLayout,
+                  },
+                  fullscreenLayout() === "split" ? "Tab view" : "Split view",
+                ),
+                fullscreenLayout() === "tab"
+                  ? div(
+                      { class: fullscreenTabPickerClass },
+                      button(
+                        {
+                          "data-style-variant": "outline",
+                          class: () =>
+                            cx(
+                              controlButtonClass,
+                              fullscreenPanel() === "code"
+                                ? tabPickerButtonActiveClass
+                                : undefined,
+                            ),
+                          onclick: () => fullscreenPanel("code"),
+                        },
+                        "Code",
+                      ),
+                      button(
+                        {
+                          "data-style-variant": "outline",
+                          class: () =>
+                            cx(
+                              controlButtonClass,
+                              fullscreenPanel() === "preview"
+                                ? tabPickerButtonActiveClass
+                                : undefined,
+                            ),
+                          onclick: () => fullscreenPanel("preview"),
+                        },
+                        "Preview",
+                      ),
+                    )
+                  : null,
+                button(
+                  {
+                    "data-style-variant": "outline",
+                    class: controlButtonClass,
+                    onclick: minimize,
+                  },
+                  "Minimize",
+                ),
+              ]
+            : button(
+                {
+                  "data-style-variant": "outline",
+                  class: controlButtonClass,
+                  onclick: maximize,
+                },
+                "Full screen",
+              ),
+        ),
+      ),
     ),
-  );
+  ) as DisposableElement;
+
+  root.__v_disposers = [...(root.__v_disposers ?? []), ...manualDisposers];
+
+  return root;
 }
