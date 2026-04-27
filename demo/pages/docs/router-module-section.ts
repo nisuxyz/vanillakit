@@ -1,5 +1,11 @@
 import { html } from "../../../src";
+import { LiveEditor } from "../../components/LiveEditor";
 import { code } from "../../highlight";
+import {
+  ROUTER_MODULE_SNIPPET_1,
+  ROUTER_MODULE_SNIPPET_2,
+  ROUTER_MODULE_SNIPPET_3,
+} from "../../snippets";
 
 export function RouterModuleSection() {
   return html`<section>
@@ -14,27 +20,17 @@ export function RouterModuleSection() {
       Configures the routing mode. Call once before rendering. Defaults to
       <code>"hash"</code> mode if not called.
     </p>
-    ${code(`import { initRouter } from "vanillakit";
-
-// Hash mode (default): URLs like /#/about
-initRouter({ mode: "hash" });
-
-// History mode: URLs like /about (requires server-side fallback)
-initRouter({ mode: "history" });`)}
+    ${code(ROUTER_MODULE_SNIPPET_1)}
 
     <h3>createRouter(routeMap)</h3>
     <p>
       Maps path patterns to handlers. Supports <code>:param</code> and
       <code>*</code> catch-all.
     </p>
-    ${code(`import { createRouter, html } from "vanillakit";
-
-const Router = createRouter({
-  "/":         () => html\`<h1>Home</h1>\`,
-  "/user/:id": () => html\`<h1>User page</h1>\`,
-  "*":         () => html\`<h1>404</h1>\`,
-});
-document.body.append(Router());`)}
+    ${LiveEditor({
+      sourceVariants: ROUTER_MODULE_SNIPPET_2,
+      label: "createRouter — define routes",
+    })}
 
     <h3>navigate(path)</h3>
     <p>Programmatic navigation.</p>
@@ -50,11 +46,6 @@ document.body.append(Router());`)}
       Creates an <code>&lt;a&gt;</code> that swaps classes based on the current
       route.
     </p>
-    ${code(`import { navLink, css } from "vanillakit";
-
-const active = css\`color: gold; font-weight: 700;\`;
-const base   = css\`color: gray;\`;
-
-document.body.append(navLink("/about", "About", active, base));`)}
+    ${code(ROUTER_MODULE_SNIPPET_3)}
   </section>`;
 }

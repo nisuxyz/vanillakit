@@ -1,5 +1,7 @@
 import { html } from "../../../src";
+import { LiveEditor } from "../../components/LiveEditor";
 import { code } from "../../highlight";
+import { EXAMPLES_SNIPPET_1 } from "../../snippets";
 
 export function ReactiveModuleSection() {
   return html`<section>
@@ -11,15 +13,10 @@ export function ReactiveModuleSection() {
 
     <h3>reactive(target)</h3>
     <p>Wraps a plain object/array in a deep reactive proxy.</p>
-    ${code(`import { reactive, effect } from "vanillakit";
-
-const state = reactive({
-  user: { name: "Ada", scores: [95, 87] },
-});
-
-effect(() => console.log(state.user.name)); // "Ada"
-state.user.name = "Grace";                  // "Grace"
-state.user.scores.push(92);                 // tracked`)}
+    ${LiveEditor({
+      sourceVariants: EXAMPLES_SNIPPET_1,
+      label: "Reactive object — mutate properties and arrays naturally",
+    })}
 
     <h3>snapshot(obj)</h3>
     <p>Returns a deep plain-object copy. Useful for serialization.</p>

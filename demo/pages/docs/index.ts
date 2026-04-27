@@ -1,39 +1,33 @@
-import { signal, html } from "../../../src/index.js";
+import { signal, vkml } from "../../../src/index.js";
 import {
   subtitleClass,
   sidebarGroupClass,
   sidebarLinkClass,
 } from "../../styles.ts";
-import {
-  HtmxSection,
-  TailwindSection,
-  HonoSection,
-  FastAPISection,
-} from "../integrations.ts";
-import { GettingStartedSection } from "./GettingStartedSection.ts";
-import { TypeScriptSection } from "./TypeScriptSection.ts";
-import { ComponentsSection } from "./ComponentsSection.ts";
-import { ReactivitySection } from "./ReactivitySection.ts";
-import { DataFetchingSection } from "./DataFetchingSection.ts";
-import { ConditionalSection } from "./ConditionalSection.ts";
-import { ListsSection } from "./ListsSection.ts";
-import { FormsSection } from "./FormsSection.ts";
-import { StylingSection } from "./StylingSection.ts";
-import { RoutingConceptsSection } from "./RoutingConceptsSection.ts";
-import { VanillaCssSection } from "./VanillaCssSection.ts";
-import { VanillaCssThemeSection } from "./VanillaCssThemeSection.ts";
-import { VanillaCssComponentsSection } from "./VanillaCssComponentsSection.ts";
-import { VanillaCssTokensSection } from "./VanillaCssTokensSection.ts";
-import { SignalSection } from "./SignalSection.ts";
-import { ReactiveModuleSection } from "./ReactiveModuleSection.ts";
-import { HtmlModuleSection } from "./HtmlModuleSection.ts";
-import { CssModuleSection } from "./CssModuleSection.ts";
-import { RouterModuleSection } from "./RouterModuleSection.ts";
+import { HonoSection, FastAPISection } from "../integrations.ts";
+import { HtmlVsVkmlSection } from "./html-vs-vkml-section.ts";
+import { VkmlModuleSection } from "./vkml-module-section.ts";
+import { GettingStartedSection } from "./getting-started-section.ts";
+import { TypeScriptSection } from "./type-script-section.ts";
+import { ComponentsSection } from "./components-section.ts";
+import { ReactivitySection } from "./reactivity-section.ts";
+import { DataFetchingSection } from "./data-fetching-section.ts";
+import { ConditionalSection } from "./conditional-section.ts";
+import { ListsSection } from "./lists-section.ts";
+import { FormsSection } from "./forms-section.ts";
+import { StylingSection } from "./styling-section.ts";
+import { RoutingConceptsSection } from "./routing-concepts-section.ts";
+import { SignalSection } from "./signal-section.ts";
+import { ReactiveModuleSection } from "./reactive-module-section.ts";
+import { HtmlModuleSection } from "./html-module-section.ts";
+import { CssModuleSection } from "./css-module-section.ts";
+import { RouterModuleSection } from "./router-module-section.ts";
 
 // ── Section definitions ────────────────────────────────────
 type SectionId =
   | "getting-started"
   | "typescript"
+  | "html-vs-vkml"
   | "components"
   | "reactivity"
   | "data-fetching"
@@ -42,17 +36,12 @@ type SectionId =
   | "forms"
   | "styling"
   | "routing-concepts"
-  | "vanillacss"
-  | "vanillacss-theming"
-  | "vanillacss-components"
-  | "vanillacss-tokens"
-  | "htmx"
-  | "tailwind"
   | "hono"
   | "fastapi"
   | "signal"
   | "reactive"
   | "html-module"
+  | "vkml-module"
   | "css-module"
   | "router";
 
@@ -72,6 +61,7 @@ const sidebarGroups: SidebarGroup[] = [
   {
     label: "Concepts",
     items: [
+      { id: "html-vs-vkml", label: "Choosing a Syntax" },
       { id: "components", label: "Components" },
       { id: "reactivity", label: "Reactivity" },
       { id: "data-fetching", label: "Data Fetching" },
@@ -83,29 +73,12 @@ const sidebarGroups: SidebarGroup[] = [
     ],
   },
   {
-    label: "VanillaCSS",
-    items: [
-      { id: "vanillacss", label: "Overview" },
-      { id: "vanillacss-theming", label: "Theming" },
-      { id: "vanillacss-components", label: "Components" },
-      { id: "vanillacss-tokens", label: "Token Reference" },
-    ],
-  },
-  {
-    label: "Integrations",
-    items: [
-      { id: "htmx", label: "htmx" },
-      { id: "tailwind", label: "Tailwind CSS" },
-      { id: "hono", label: "Hono" },
-      { id: "fastapi", label: "FastAPI" },
-    ],
-  },
-  {
     label: "API Reference",
     items: [
       { id: "signal", label: "signal.js" },
       { id: "reactive", label: "reactive.js" },
       { id: "html-module", label: "html.js" },
+      { id: "vkml-module", label: "vkml.js" },
       { id: "css-module", label: "css.js" },
       { id: "router", label: "router.js" },
     ],
@@ -116,10 +89,7 @@ const sidebarGroups: SidebarGroup[] = [
 const sections: Record<SectionId, () => Node> = {
   "getting-started": GettingStartedSection,
   typescript: TypeScriptSection,
-  vanillacss: VanillaCssSection,
-  "vanillacss-theming": VanillaCssThemeSection,
-  "vanillacss-components": VanillaCssComponentsSection,
-  "vanillacss-tokens": VanillaCssTokensSection,
+  "html-vs-vkml": HtmlVsVkmlSection,
   components: ComponentsSection,
   reactivity: ReactivitySection,
   "data-fetching": DataFetchingSection,
@@ -128,13 +98,12 @@ const sections: Record<SectionId, () => Node> = {
   forms: FormsSection,
   styling: StylingSection,
   "routing-concepts": RoutingConceptsSection,
-  htmx: HtmxSection,
-  tailwind: TailwindSection,
   hono: HonoSection,
   fastapi: FastAPISection,
   signal: SignalSection,
   reactive: ReactiveModuleSection,
   "html-module": HtmlModuleSection,
+  "vkml-module": VkmlModuleSection,
   "css-module": CssModuleSection,
   router: RouterModuleSection,
 };
@@ -143,39 +112,38 @@ const sections: Record<SectionId, () => Node> = {
 export function DocsPage() {
   const activeSection = signal<SectionId>("getting-started");
 
-  return html`<div class="animate-in">
-    <h1>Docs</h1>
-    <p class=${subtitleClass}>API reference, concepts, and guides.</p>
-
-    <div data-layout="sidebar">
-      <aside>
-        <nav>
-          ${sidebarGroups.map(
-            (group) => html`
-              <div class=${sidebarGroupClass}>
-                <div class="group-label">${group.label}</div>
-                ${group.items.map(
-                  (item) => html`
-                    <a
-                      class=${sidebarLinkClass}
-                      aria-current=${() =>
-                        activeSection() === item.id ? "page" : null}
-                      onclick=${(e: Event) => {
-                        e.preventDefault();
-                        activeSection(item.id);
-                      }}
-                      href="#"
-                      >${item.label}</a
-                    >
-                  `,
-                )}
-              </div>
-            `,
-          )}
-        </nav>
-      </aside>
-
-      <div>${() => sections[activeSection()]()}</div>
-    </div>
-  </div>`;
+  return vkml.div(
+    { class: "animate-in" },
+    vkml.h1("Docs"),
+    vkml.p({ class: subtitleClass }, "API reference, concepts, and guides."),
+    vkml.div(
+      { "data-layout": "sidebar" },
+      vkml.aside(
+        vkml.nav(
+          sidebarGroups.map((group) =>
+            vkml.div(
+              { class: sidebarGroupClass },
+              vkml.div({ class: "group-label" }, group.label),
+              group.items.map((item) =>
+                vkml.a(
+                  {
+                    class: sidebarLinkClass,
+                    "aria-current": () =>
+                      activeSection() === item.id ? "page" : null,
+                    onclick: (e: Event) => {
+                      e.preventDefault();
+                      activeSection(item.id);
+                    },
+                    href: "#",
+                  },
+                  item.label,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      vkml.div(() => sections[activeSection()]()),
+    ),
+  );
 }

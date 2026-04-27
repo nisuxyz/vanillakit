@@ -19,7 +19,7 @@ export function ComponentsSection() {
     </p>
 
     ${LiveEditor({
-      source: COUNTER,
+      sourceVariants: COUNTER,
       label: "Counter component",
     })}
 
@@ -30,7 +30,7 @@ export function ComponentsSection() {
     </p>
 
     ${LiveEditor({
-      source: PROPS,
+      sourceVariants: PROPS,
       label: "UserCard component",
     })}
 
@@ -42,7 +42,7 @@ export function ComponentsSection() {
     </p>
 
     ${LiveEditor({
-      source: SIGNAL_PROPS,
+      sourceVariants: SIGNAL_PROPS,
       label: "Reactive props — type a name or pick a color",
     })}
 
@@ -53,14 +53,14 @@ export function ComponentsSection() {
     </p>
 
     ${LiveEditor({
-      source: DIRECT_CHILDREN,
+      sourceVariants: DIRECT_CHILDREN,
       label: "Layout component with children",
     })}
 
     <p>Or pass children as arguments:</p>
 
     ${LiveEditor({
-      source: PROPS_CHILDREN,
+      sourceVariants: PROPS_CHILDREN,
       label: "Direct children via arguments",
     })}
   </section>`;

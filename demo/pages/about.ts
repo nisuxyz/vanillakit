@@ -1,4 +1,4 @@
-import { html, css } from "../../src/index.js";
+import { vkml, css } from "../../src/index.js";
 import { subtitleClass } from "../styles.ts";
 
 const moduleIcon = css`
@@ -58,47 +58,56 @@ const modules = [
 ];
 
 export function AboutPage() {
-  return html`<div class="animate-in">
-    <h1>Architecture</h1>
-    <p class=${subtitleClass}>
-      Six standalone modules. ~760 lines total. Zero dependencies.
-    </p>
-    <article>
-      <h3>Design Principles</h3>
-      <ul>
-        <li>Functions are components. No classes, no magic strings.</li>
-        <li>
-          <code>() =></code> means reactive. Everything else is static. That's
-          the only rule.
-        </li>
-        <li>
-          Fine-grained updates. Each reactive expression updates exactly one DOM
-          node.
-        </li>
-        <li>Modules are independent. Only <code>signal.js</code> is shared.</li>
-      </ul>
-    </article>
-    <div>
-      ${modules.map(
-        (m) =>
-          html`<article data-card style="margin-bottom:10px;">
-            <div style="display:flex;align-items:center;gap:16px;">
-              <div
-                class=${moduleIcon}
-                style=${`background: ${m.color}20; color: ${m.color};`}
-              >
-                ${m.icon}
-              </div>
-              <div style="flex:1;display:flex;flex-direction:column;gap:2px;">
-                <strong style="font-family:var(--vk-font-mono);font-size:0.9rem;"
-                  >${m.name}</strong
-                >
-                <small>${m.desc}</small>
-              </div>
-              <span data-badge>${m.lines}</span>
-            </div>
-          </article>`,
-      )}
-    </div>
-  </div>`;
+  return vkml.div(
+    { class: "animate-in" },
+    vkml.h1("Architecture"),
+    vkml.p(
+      { class: subtitleClass },
+      "Six standalone modules. ~760 lines total. Zero dependencies.",
+    ),
+    vkml.article(
+      vkml.h3("Design Principles"),
+      vkml.ul(
+        vkml.li("Functions are components. No classes, no magic strings."),
+        vkml.li(
+          vkml.code("() =>"),
+          " means reactive. Everything else is static. That's the only rule.",
+        ),
+        vkml.li(
+          "Fine-grained updates. Each reactive expression updates exactly one DOM node.",
+        ),
+        vkml.li(
+          "Modules are independent. Only ",
+          vkml.code("signal.js"),
+          " is shared.",
+        ),
+      ),
+    ),
+    vkml.div(
+      modules.map((m) =>
+        vkml.article(
+          { "data-card": true, style: "margin-bottom:10px;" },
+          vkml.div(
+            { style: "display:flex;align-items:center;gap:16px;" },
+            vkml.div(
+              {
+                class: moduleIcon,
+                style: `background: ${m.color}20; color: ${m.color};`,
+              },
+              m.icon,
+            ),
+            vkml.div(
+              { style: "flex:1;display:flex;flex-direction:column;gap:2px;" },
+              vkml.strong(
+                { style: "font-family:var(--vk-font-mono);font-size:0.9rem;" },
+                m.name,
+              ),
+              vkml.small(m.desc),
+            ),
+            vkml.span({ "data-badge": true }, m.lines),
+          ),
+        ),
+      ),
+    ),
+  );
 }

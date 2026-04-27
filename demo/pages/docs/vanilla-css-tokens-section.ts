@@ -1,5 +1,6 @@
 import { html } from "../../../src";
 import { code } from "../../highlight";
+import { VANILLA_CSS_TOKENS_SNIPPET_1 } from "../../snippets.js";
 
 function row(variable: string, defaultVal: string, description: string): Node {
   return html`<tr>
@@ -17,12 +18,7 @@ export function VanillaCssTokensSection() {
       stylesheet — unlayered declarations automatically beat
       <code>@layer vanillacss.tokens</code>.
     </p>
-    ${code(
-      `:root {
-  --vk-color-accent: hsl(220 80% 60%);  /* override a single token */
-}`,
-      "css",
-    )}
+    ${code(VANILLA_CSS_TOKENS_SNIPPET_1, "css")}
 
     <h3>Palette</h3>
     <p>

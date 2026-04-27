@@ -1,5 +1,19 @@
 import { signal, html, css, keyframes, effect } from "../../src/index.js";
+import { LiveEditor } from "../components/LiveEditor.ts";
 import { code } from "../highlight.ts";
+import {
+  HTMX_PARTIAL,
+  HTMX_SETUP,
+  HTMX_ISLANDS,
+  TAILWIND_DIRECT,
+  TAILWIND_MIX,
+  TAILWIND_CONFIG,
+  HONO_SERVER,
+  HONO_FETCH,
+  FASTAPI_LAYOUT,
+  FASTAPI_BACKEND,
+  FASTAPI_FETCH,
+} from "../snippets.ts";
 
 // ── htmx interactive demo ───────────────────────────────────
 export function HtmxSection() {
@@ -178,62 +192,20 @@ export function HtmxSection() {
         any server. It contains a <code>[data-vanillakit]</code> mount point for
         the reactive island.
       </p>
-      ${code(
-        `<!-- partials/dashboard.html -->
-<div class="server-row"><strong>Dashboard</strong> — loaded via htmx</div>
-<div class="server-row">User: <em>Ada Lovelace</em> | Role: Admin</div>
-<div class="server-row">Last login: <span id="login-time"></span></div>
-<div data-vanillakit="counter"></div>
-<script>
-  document.getElementById("login-time").textContent = new Date().toLocaleTimeString();
-</script>`,
-        "markup",
-      )}
+      ${code(HTMX_PARTIAL, "markup")}
 
       <h3>Setup</h3>
-      ${code(
-        `<!doctype html>
-<html>
-  <head>
-    <script src="https://unpkg.com/htmx.org@2"></script>
-  </head>
-  <body>
-    <div hx-get="/partials/dashboard.html" hx-trigger="click" hx-target="#content">
-      Load dashboard
-    </div>
-    <div id="content"></div>
-    <script type="module" src="./app.js"></script>
-  </body>
-</html>`,
-        "markup",
-      )}
+      ${code(HTMX_SETUP, "markup")}
 
       <h3>Reactive islands inside swapped content</h3>
       <p>
         After htmx swaps in HTML, mount vanillakit components on
         <code>[data-vanillakit]</code> elements.
       </p>
-      ${code(`import { signal, html, css } from "vanillakit";
-
-function LiveCounter(el) {
-  const count = signal(0);
-  el.replaceChildren(html\`
-    <button
-      class=\${css\`padding: 6px 14px; cursor: pointer;\`}
-      onclick=\${() => count(n => n + 1)}
-    >
-      Clicked \${count} times
-    </button>
-  \`);
-}
-
-document.body.addEventListener("htmx:afterSwap", (e) => {
-  e.detail.target
-    .querySelectorAll("[data-vanillakit]")
-    .forEach((el) => {
-      if (el.dataset.vanillakit === "counter") LiveCounter(el);
-    });
-});`)}
+      ${LiveEditor({
+        sourceVariants: HTMX_ISLANDS,
+        label: "Reactive island — mounted after htmx swap",
+      })}
     </section>
   </section>`;
 }
@@ -387,54 +359,23 @@ export function TailwindSection() {
         Since <code>html\`\`</code> produces real DOM nodes, Tailwind utilities
         work as-is. Use signal-derived class strings for reactive styles.
       </p>
-      ${code(`import { signal, html } from "vanillakit";
-
-const open = signal(false);
-
-document.body.append(html\`
-  <div class="max-w-md mx-auto p-6">
-    <button
-      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      onclick=\${() => open(v => !v)}
-    >
-      Toggle
-    </button>
-    <div class=\${() => open()
-      ? "mt-4 p-4 bg-gray-800 rounded border border-gray-700"
-      : "hidden"
-    }>
-      Reactively shown/hidden via signals.
-    </div>
-  </div>
-\`);`)}
+      ${LiveEditor({
+        sourceVariants: TAILWIND_DIRECT,
+        label: "Tailwind classes — reactive class switching",
+      })}
 
       <h3>Mixing Tailwind + css\`\`</h3>
       <p>
         Use <code>cx()</code> to combine Tailwind utility classes with scoped
         styles.
       </p>
-      ${code(`import { html, css, cx } from "vanillakit";
-
-const glowEffect = css\`
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-  transition: box-shadow 0.3s ease;
-  &:hover { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
-\`;
-
-document.body.append(html\`
-  <div class=\${cx("p-6 rounded-lg bg-gray-900 border border-gray-700", glowEffect)}>
-    Best of both worlds.
-  </div>
-\`);`)}
+      ${LiveEditor({
+        sourceVariants: TAILWIND_MIX,
+        label: "Mixing Tailwind + css\`\` scoped styles",
+      })}
 
       <h3>Tailwind config</h3>
-      ${code(`// tailwind.config.js
-export default {
-  content: [
-    "./demo/**/*.{html,ts,js}",
-    "./src/**/*.js",
-  ],
-};`)}
+      ${code(TAILWIND_CONFIG)}
     </section>
   </section>`;
 }
@@ -450,54 +391,13 @@ export function HonoSection() {
     </p>
 
     <h3>API server + static frontend</h3>
-    ${code(
-      `// server.ts (Hono on Bun)
-import { Hono } from "hono";
-import { serveStatic } from "hono/bun";
-import { cors } from "hono/cors";
-
-const app = new Hono();
-app.use("/api/*", cors());
-
-app.get("/api/todos", (c) => {
-  return c.json([
-    { id: 1, text: "Build with vanillakit", done: false },
-    { id: 2, text: "Deploy to edge", done: true },
-  ]);
-});
-
-app.post("/api/todos", async (c) => {
-  const body = await c.req.json();
-  return c.json({ id: Date.now(), ...body }, 201);
-});
-
-// Serve the Vite build as static files
-app.use("/*", serveStatic({ root: "./docs" }));
-
-export default app;`,
-      "typescript",
-    )}
+    ${code(HONO_SERVER, "typescript")}
 
     <h3>Fetching data into signals</h3>
-    ${code(`import { signal, html } from "vanillakit";
-
-const todos = signal([]);
-const loading = signal(true);
-
-fetch("/api/todos")
-  .then(r => r.json())
-  .then(data => { todos(data); loading(false); });
-
-document.body.append(html\`
-  <div>
-    \${() => loading()
-      ? html\`<p>Loading...</p>\`
-      : html\`<ul>
-          \${() => todos().map(t => html\`<li>\${t.text}</li>\`)}
-        </ul>\`
-    }
-  </div>
-\`);`)}
+    ${LiveEditor({
+      sourceVariants: HONO_FETCH,
+      label: "Fetching data — Hono API + signals",
+    })}
   </section>`;
 }
 
@@ -511,93 +411,15 @@ export function FastAPISection() {
     </p>
 
     <h3>Project layout</h3>
-    ${code(
-      `project/
-  backend/
-    main.py
-    requirements.txt
-  frontend/
-    demo/
-      index.html
-      app.ts
-    src/        # vanillakit source
-    vite.config.js`,
-      "bash",
-    )}
+    ${code(FASTAPI_LAYOUT, "bash")}
 
     <h3>FastAPI backend</h3>
-    ${code(
-      `# backend/main.py
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-
-app = FastAPI()
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"])
-
-class Todo(BaseModel):
-    id: int
-    text: str
-    done: bool = False
-
-todos: list[Todo] = [
-    Todo(id=1, text="Learn vanillakit", done=True),
-    Todo(id=2, text="Build something", done=False),
-]
-
-@app.get("/api/todos")
-def get_todos():
-    return todos
-
-@app.post("/api/todos")
-def add_todo(todo: Todo):
-    todos.append(todo)
-    return todo
-
-app.mount("/", StaticFiles(directory="../frontend/docs", html=True))`,
-      "python",
-    )}
+    ${code(FASTAPI_BACKEND, "python")}
 
     <h3>Frontend fetching</h3>
-    ${code(`import { signal, html, each } from "vanillakit";
-
-const todos = signal([]);
-
-async function loadTodos() {
-  const res = await fetch("/api/todos");
-  todos(await res.json());
-}
-
-async function addTodo(text) {
-  const res = await fetch("/api/todos", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: Date.now(), text, done: false }),
-  });
-  todos(list => [...list, await res.json()]);
-}
-
-loadTodos();
-
-const input = signal("");
-
-document.body.append(html\`
-  <div>
-    <input
-      value=\${() => input()}
-      oninput=\${(e) => input(e.target.value)}
-      onkeydown=\${(e) => {
-        if (e.key === "Enter") { addTodo(input()); input(""); }
-      }}
-      placeholder="New todo..."
-    />
-    <ul>
-      \${each(todos, t => t.id,
-        (itemSig) => html\`<li>\${() => itemSig().text}</li>\`
-      )}
-    </ul>
-  </div>
-\`);`)}
+    ${LiveEditor({
+      sourceVariants: FASTAPI_FETCH,
+      label: "Fetching data — FastAPI + signals",
+    })}
   </section>`;
 }

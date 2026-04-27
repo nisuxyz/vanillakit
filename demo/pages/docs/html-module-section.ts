@@ -1,5 +1,6 @@
 import { html } from "../../../src";
 import { code } from "../../highlight";
+import { HTML_MODULE_SNIPPET_1, HTML_MODULE_SNIPPET_2 } from "../../snippets";
 
 export function HtmlModuleSection() {
   return html`<section>
@@ -8,23 +9,24 @@ export function HtmlModuleSection() {
       Tagged template producing live DOM nodes with reactive bindings. No
       virtual DOM.
     </p>
+    <p style="font-size:0.875rem; color:var(--vk-color-text-muted);">
+      Prefer function-call syntax? See <strong>vkml.js</strong> in the API
+      Reference. For a full comparison of both styles see
+      <strong>Choosing a Syntax</strong> in Concepts.
+    </p>
+
+    <p>
+      Returns a <code>Node</code> or <code>DocumentFragment</code>. For SVG
+      support or when you need a guaranteed single <code>Element</code>, use
+      <strong>vkml.js</strong> instead.
+    </p>
 
     <h3>html\`...\`</h3>
     <p>
       Interpolations can be static values, signals, or functions. Functions are
       wrapped in effects.
     </p>
-    ${code(`import { signal, html } from "vanillakit";
-
-const name = signal("world");
-
-const el = html\`
-  <div>
-    <h1>Hello, \${name}!</h1>
-    <input value=\${() => name()} oninput=\${(e) => name(e.target.value)} />
-  </div>
-\`;
-document.body.append(el);`)}
+    ${code(HTML_MODULE_SNIPPET_1.html)}
 
     <p>Supported attribute bindings:</p>
     <ul
@@ -41,12 +43,6 @@ document.body.append(el);`)}
 
     <h3>each(listFn, keyFn, renderFn)</h3>
     <p>Keyed list reconciliation. Each item is passed as a signal.</p>
-    ${code(`import { signal, each, html } from "vanillakit";
-
-const items = signal([{ id: 1, text: "first" }, { id: 2, text: "second" }]);
-
-html\`<ul>
-  \${each(items, i => i.id, (itemSig) => html\`<li>\${() => itemSig().text}</li>\`)}
-</ul>\`;`)}
+    ${code(HTML_MODULE_SNIPPET_2.html)}
   </section>`;
 }

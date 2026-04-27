@@ -12,8 +12,12 @@ import { HomePage } from "./pages/home.ts";
 import { ExamplesPage } from "./pages/examples.ts";
 import { AboutPage } from "./pages/about.ts";
 import { DocsPage } from "./pages/docs/index.ts";
+import { VanillaCssPage } from "./pages/vanilla-css.ts";
 
-initRouter({ mode: "history", base: import.meta.env.BASE_URL });
+initRouter({
+  mode: "history",
+  base: (import.meta as any).env?.BASE_URL || "/",
+});
 
 const { theme, toggle } = themeToggle();
 
@@ -39,6 +43,7 @@ const RouterView = createRouter({
   "/": HomePage,
   "/examples": ExamplesPage,
   "/docs": DocsPage,
+  "/vanillacss": VanillaCssPage,
   "/about": AboutPage,
   "*": () =>
     html`<div class="animate-in">
@@ -62,6 +67,7 @@ export function App() {
       <div style="display:flex;align-items:center;gap:8px;">
         <nav>
           ${navLink("/", "Home")} ${navLink("/docs", "Docs")}
+          ${navLink("/vanillacss", "VanillaCSS")}
           ${navLink("/examples", "Examples")} ${navLink("/about", "About")}
         </nav>
         <button class=${themeToggleBtn} onclick=${toggle} title="Toggle theme">

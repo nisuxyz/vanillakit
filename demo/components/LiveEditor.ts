@@ -1,3 +1,4 @@
+import * as VanillaKit from "../../src/index.js";
 import {
   signal,
   computed,
@@ -9,11 +10,16 @@ import {
   isReactive,
   snapshot,
   html,
+  vkml,
   each,
   css,
   keyframes,
   globalCss,
   cx,
+  article,
+  div,
+  header,
+  button,
 } from "../../src/index.js";
 import { CodeJar } from "codejar";
 import { withLineNumbers } from "codejar-linenumbers";
@@ -21,9 +27,6 @@ import Prism from "prismjs";
 import { transform } from "sucrase";
 
 // ── Styles ─────────────────────────────────────────────────
-const wrapperClass = css`
-  margin: 8px 0 24px;
-`;
 
 globalCss`
   :root {
@@ -72,6 +75,36 @@ globalCss`
   }
 `;
 
+const tabsContainerClass = css`
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--vk-color-border);
+  background: var(--editor-bg);
+  margin: 0;
+  padding: 0;
+`;
+
+const tabButtonClass = css`
+  flex: 0 1 auto;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  color: var(--editor-line-nr);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  &:hover {
+    color: var(--editor-text);
+  }
+`;
+
+const tabButtonActiveClass = css`
+  color: var(--vk-color-accent);
+  border-bottom-color: var(--vk-color-accent);
+`;
+
 const editorClass = css`
   display: block;
   width: 100%;
@@ -88,63 +121,13 @@ const editorClass = css`
   outline: none;
   box-sizing: border-box;
   border: none;
-  border-radius: var(--vk-radius-md) var(--vk-radius-md) 0 0;
-`;
-
-const outputClass = css`
-  background: var(--vk-color-surface);
-  border: 1px solid var(--vk-color-border);
-  border-top: none;
-  border-radius: 0 0 var(--vk-radius-md) var(--vk-radius-md);
-  padding: 20px;
-`;
-
-const outputHeaderClass = css`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-`;
-
-const outputLabelClass = css`
-  font-family: var(--vk-font-mono);
-  font-size: 0.68rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--vk-color-accent);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  &::before {
-    content: "▶";
-    font-size: 0.55rem;
-  }
-`;
-
-const resetBtnClass = css`
-  font-family: var(--vk-font-mono);
-  font-size: 0.68rem;
-  background: none;
-  border: none;
-  color: var(--vk-color-text-muted);
-  cursor: pointer;
-  padding: 2px 6px;
-  &:hover {
-    color: var(--vk-color-accent);
-  }
-`;
-
-const errorClass = css`
-  color: #e45;
-  font-family: var(--vk-font-mono);
-  font-size: 0.8rem;
-  white-space: pre-wrap;
   margin: 0;
+  border-radius: 0;
 `;
 
 // ── Sandbox ────────────────────────────────────────────────
-const SANDBOX_NAMES = [
+
+const baseSandboxExports = [
   "signal",
   "computed",
   "effect",
@@ -155,6 +138,7 @@ const SANDBOX_NAMES = [
   "isReactive",
   "snapshot",
   "html",
+  "vkml",
   "each",
   "css",
   "keyframes",
@@ -162,45 +146,158 @@ const SANDBOX_NAMES = [
   "cx",
 ];
 
-const SANDBOX_VALUES: unknown[] = [
-  signal,
-  computed,
-  effect,
-  batch,
-  untrack,
-  reactive,
-  toRaw,
-  isReactive,
-  snapshot,
-  html,
-  each,
-  css,
-  keyframes,
-  globalCss,
-  cx,
+const elements = [
+  "a",
+  "abbr",
+  "address",
+  "area",
+  "article",
+  "aside",
+  "audio",
+  "b",
+  "base",
+  "bdi",
+  "bdo",
+  "blockquote",
+  "body",
+  "br",
+  "button",
+  "canvas",
+  "caption",
+  "cite",
+  "code",
+  "col",
+  "colgroup",
+  "data",
+  "datalist",
+  "dd",
+  "del",
+  "details",
+  "dfn",
+  "dialog",
+  "dir",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "embed",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "footer",
+  "form",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "head",
+  "header",
+  "hgroup",
+  "hr",
+  "i",
+  "iframe",
+  "img",
+  "input",
+  "ins",
+  "kbd",
+  "label",
+  "legend",
+  "li",
+  "link",
+  "main",
+  "map",
+  "mark",
+  "menu",
+  "meta",
+  "meter",
+  "nav",
+  "noscript",
+  "object",
+  "ol",
+  "optgroup",
+  "option",
+  "output",
+  "p",
+  "picture",
+  "pre",
+  "progress",
+  "q",
+  "rp",
+  "rt",
+  "ruby",
+  "s",
+  "samp",
+  "script",
+  "section",
+  "select",
+  "small",
+  "source",
+  "span",
+  "strong",
+  "style",
+  "sub",
+  "summary",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "template",
+  "textarea",
+  "tfoot",
+  "th",
+  "thead",
+  "time",
+  "title",
+  "tr",
+  "track",
+  "u",
+  "ul",
+  "variable",
+  "video",
+  "wbr",
+  "circle",
+  "clipPath",
+  "defs",
+  "ellipse",
+  "g",
+  "image",
+  "line",
+  "linearGradient",
+  "mask",
+  "path",
+  "pattern",
+  "polygon",
+  "polyline",
+  "radialGradient",
+  "rect",
+  "stop",
+  "svg",
+  "text",
+  "use",
 ];
 
-// ── Component ──────────────────────────────────────────────
+const SANDBOX_NAMES = [...baseSandboxExports, ...elements];
 
-/**
- * LiveEditor — editable source code that is eval'd in a sandbox and
- * rendered live underneath. The source string IS the code that runs.
- */
+const SANDBOX_VALUES = SANDBOX_NAMES.map((name) => (VanillaKit as any)[name]);
+
 export function LiveEditor({
-  source,
+  sourceVariants,
   label = "Live output",
 }: {
-  source: string;
+  sourceVariants: Record<string, string>;
   label?: string;
 }) {
-  const trimmed = source.trim();
+  const variantNames = Object.keys(sourceVariants);
+  const initialMode = variantNames[0];
+  const mode = signal<string>(initialMode);
   const err = signal("");
   const modified = signal(false);
   const outputContainer = document.createElement("div");
   let prevDisposers: (() => void)[] = [];
 
   function evaluate(code: string) {
-    // Clean up effects from the previous run
     prevDisposers.forEach((d) => d());
     prevDisposers = [];
     outputContainer.innerHTML = "";
@@ -221,7 +318,6 @@ export function LiveEditor({
     }
 
     try {
-      // Intercept document.body.append / appendChild to capture output
       const captured: Node[] = [];
       const fakeAppend = (...nodes: (Node | string)[]) => {
         for (const n of nodes)
@@ -230,29 +326,30 @@ export function LiveEditor({
       const fakeBody = new Proxy(document.body, {
         get(target, prop) {
           if (prop === "append") return fakeAppend;
-          if (prop === "appendChild")
+          if (prop === "appendChild") {
             return (n: Node) => {
               captured.push(n);
               return n;
             };
+          }
           return Reflect.get(target, prop);
         },
       });
       const fakeDoc = new Proxy(document, {
         get(target, prop) {
           if (prop === "body") return fakeBody;
-          if (prop === "getElementById")
+          if (prop === "getElementById") {
             return () => {
               const el = document.createElement("div");
               (el as any).append = fakeAppend;
               return el;
             };
+          }
           const val = Reflect.get(target, prop);
           return typeof val === "function" ? val.bind(target) : val;
         },
       });
 
-      // Wrap effect() to track disposers for cleanup on re-eval
       const disposers: (() => void)[] = [];
       const trackedEffect = (fn: () => void) => {
         const dispose = effect(fn);
@@ -273,68 +370,178 @@ export function LiveEditor({
     }
   }
 
-  // Initial evaluation
-  evaluate(trimmed);
+  function buildEditor(variantName: string) {
+    const wrapper = document.createElement("div");
+    const editorEl = document.createElement("div");
+    editorEl.className = `${editorClass} language-typescript`;
+    wrapper.appendChild(editorEl);
 
-  // Build CodeJar editor
-  const editorEl = document.createElement("div");
-  editorEl.className = `${editorClass} language-typescript`;
+    const initialCode = sourceVariants[variantName].trim();
+    const sig = signal(initialCode);
 
-  const highlight = withLineNumbers(
-    (el: HTMLElement) => {
-      const code = el.textContent || "";
-      el.innerHTML = Prism.highlight(
-        code,
-        /// @ts-ignore
-        Prism.languages["typescript"],
-        "typescript",
+    // Store jar reference
+    const state = {
+      wrapper,
+      editorEl,
+      jar: null as null | ReturnType<typeof CodeJar>,
+      sig,
+      initialCode,
+    };
+
+    requestAnimationFrame(() => {
+      const highlight = withLineNumbers(
+        (el: HTMLElement) => {
+          const code = el.textContent || "";
+          el.innerHTML = Prism.highlight(
+            code,
+            /// @ts-ignore
+            Prism.languages["typescript"],
+            "typescript",
+          );
+        },
+        {
+          color: "#4a4a5a",
+          backgroundColor: "rgba(255,255,255,0.04)",
+        },
       );
-    },
-    {
-      color: "#4a4a5a",
-      backgroundColor: "rgba(255,255,255,0.04)",
-    },
-  );
 
-  // Defer CodeJar init until element is in the DOM
+      const jar = CodeJar(editorEl, highlight, {
+        tab: "  ",
+        catchTab: true,
+        preserveIdent: true,
+        addClosing: true,
+      });
+
+      state.jar = jar;
+      jar.updateCode(initialCode);
+      jar.onUpdate((code) => {
+        sig(code);
+        modified(code !== initialCode);
+        evaluate(code);
+      });
+    });
+
+    return state;
+  }
+
+  const editors: Record<
+    string,
+    {
+      wrapper: HTMLElement;
+      editorEl: HTMLElement;
+      jar: any;
+      sig: any;
+      initialCode: string;
+    }
+  > = {};
+  for (const name of variantNames) {
+    editors[name] = buildEditor(name);
+  }
+
+  // Defer initial evaluation since jar initialization is deferred
   requestAnimationFrame(() => {
-    const jar = CodeJar(editorEl, highlight, {
-      tab: "  ",
-      catchTab: true,
-      preserveIdent: true,
-      addClosing: true,
-    });
-    // Set code via updateCode so highlighting + line numbers render immediately
-    jar.updateCode(trimmed);
-    jar.onUpdate((code) => {
-      modified(code !== trimmed);
-      evaluate(code);
-    });
-    // Store jar on element for reset access
-    (editorEl as any)._jar = jar;
+    evaluate(editors[mode()].initialCode);
   });
 
   function reset() {
-    const jar = (editorEl as any)._jar;
-    if (jar) jar.updateCode(trimmed);
+    const state = editors[mode()];
+    state.jar.updateCode(state.initialCode);
+    state.sig(state.initialCode);
     modified(false);
-    evaluate(trimmed);
+    evaluate(state.initialCode);
   }
 
-  return html`<div class=${wrapperClass}>
-    ${editorEl}
-    <div class=${outputClass}>
-      <div class=${outputHeaderClass}>
-        <div class=${outputLabelClass}>${label}</div>
-        ${() =>
+  function switchMode(newMode: string) {
+    if (newMode === mode()) return;
+    mode(newMode);
+    const state = editors[newMode];
+    modified(state.sig() !== state.initialCode);
+    evaluate(state.sig());
+  }
+
+  return article(
+    {
+      "data-card": true,
+      style:
+        "padding: 0; padding-inline: 0; margin-bottom: 2rem; overflow: hidden;",
+    },
+    variantNames.length > 1
+      ? div(
+          { class: tabsContainerClass },
+          ...variantNames.map((name) =>
+            vkml.button(
+              {
+                class: () =>
+                  cx(
+                    tabButtonClass,
+                    mode() === name ? tabButtonActiveClass : undefined,
+                  ),
+                onclick: () => switchMode(name),
+                style:
+                  "border-radius: var(--vk-radius-md) var(--vk-radius-md) 0 0; text-transform: uppercase;",
+              },
+              name,
+            ),
+          ),
+        )
+      : null,
+    div(
+      {
+        class: css`
+          padding-inline: 0;
+          margin-top: 0;
+        `,
+      },
+      () => {
+        // Toggle visibility via display instead of remounting nodes.
+        // Remounting breaks CodeJar's internal wrapper structure.
+        return null; // The real nodes are returned separately below
+      },
+      ...variantNames.map((name) => {
+        const el = editors[name].wrapper;
+        // Effect to toggle display
+        effect(() => {
+          el.style.display = mode() === name ? "block" : "none";
+        });
+        return el;
+      }),
+    ),
+    div(
+      header(
+        {
+          style:
+            "display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;",
+        },
+        div(
+          {
+            style:
+              "font-family: var(--vk-font-mono); font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--vk-color-accent);",
+          },
+          "▶ " + label,
+        ),
+        () =>
           modified()
-            ? html`<button class=${resetBtnClass} onclick=${reset}>
-                ↺ reset
-              </button>`
-            : ""}
-      </div>
-      ${() => (err() ? html`<pre class=${errorClass}>${err()}</pre>` : "")}
-      ${outputContainer}
-    </div>
-  </div>`;
+            ? button(
+                {
+                  "data-style-variant": "ghost",
+                  style: "padding: 2px 8px; font-size: 0.7rem;",
+                  onclick: reset,
+                },
+                "↺ reset",
+              )
+            : null,
+      ),
+      () =>
+        err()
+          ? vkml.pre(
+              {
+                style:
+                  "color: var(--vk-color-danger, #e45); margin: 0; white-space: pre-wrap; font-family: var(--vk-font-mono); font-size: 0.8rem;",
+              },
+              err(),
+            )
+          : null,
+      outputContainer,
+    ),
+  );
 }

@@ -1,7 +1,7 @@
 import { html } from "../../../src";
 import { LiveEditor } from "../../components/LiveEditor";
 import { code } from "../../highlight";
-import { COUNTER } from "../../snippets";
+import { COUNTER, TYPE_SCRIPT_SNIPPET_1, TYPE_SCRIPT_SNIPPET_2, TYPE_SCRIPT_SNIPPET_3, TYPE_SCRIPT_SNIPPET_4 } from "../../snippets";
 
 // ── Section renderers ──────────────────────────────────────
 export function TypeScriptSection() {
@@ -15,16 +15,10 @@ export function TypeScriptSection() {
       types directly:
     </p>
     ${LiveEditor({
-      source: COUNTER,
+      sourceVariants: COUNTER,
       label: "Counter component with TypeScript types",
     })}
-    ${code(
-      `import { signal } from "vanillakit";
-import type { Signal, ReadonlySignal } from "vanillakit/signal.js";
-
-const count: Signal<number> = signal(0);`,
-      "typescript",
-    )}
+    ${code(TYPE_SCRIPT_SNIPPET_1, "typescript")}
 
     <p>
       If you're writing <code>.ts</code> files, make sure your
@@ -33,41 +27,17 @@ const count: Signal<number> = signal(0);`,
       <code>"allowImportingTsExtensions": true</code> (already the default with
       Vite).
     </p>
-    ${code(
-      `{
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowJs": true,
-    "checkJs": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "strict": true,
-    "lib": ["ESNext", "DOM", "DOM.Iterable"]
-  }
-}`,
-      "javascript",
-    )}
+    ${code(TYPE_SCRIPT_SNIPPET_2, "javascript")}
 
     <h3>HMR with Vite</h3>
     <p>A minimal <code>vite.config.js</code>:</p>
-    ${code(`import { defineConfig } from "vite";
-
-export default defineConfig({
-  root: "demo",
-  base: "./",
-});`)}
+    ${code(TYPE_SCRIPT_SNIPPET_3)}
 
     <h3>Production builds</h3>
     <p>
       <code>vite build</code> produces a single minified JS bundle. The entire
       library plus this full demo app compiles to ~25 KB gzipped.
     </p>
-    ${code(
-      `npx vite build
-# output in dist/ (or wherever outDir points)`,
-      "bash",
-    )}
+    ${code(TYPE_SCRIPT_SNIPPET_4, "bash")}
   </section>`;
 }

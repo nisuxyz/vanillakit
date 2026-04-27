@@ -6,9 +6,10 @@ import {
   html,
   css,
   cx,
-} from "../../src/index.js";
-import { subtitleClass } from "../styles.ts";
-import { code } from "../highlight.ts";
+} from "../../../src/index.js";
+import { subtitleClass } from "../../styles.ts";
+import { code } from "../../highlight.ts";
+import { EXAMPLES_SNIPPET_3 } from "../../snippets.ts";
 
 const codeBlock = css`
   font-family: var(--vk-font-mono);
@@ -656,41 +657,7 @@ export function PlaygroundSection() {
     </article>
     <details>
       <summary>View source — reactive(), css\`\`, cx()</summary>
-      ${code(`// Deep reactive proxy — mutate normally, changes propagate
-const state = reactive({
-  user: {
-    name: "Ada Lovelace",
-    settings: {
-      theme: "dark",
-      notifications: { email: true, push: false, frequency: "daily" },
-    },
-    scores: [95, 87, 92],
-  },
-});
-
-// Computed snapshot for display — auto-updates
-const jsonView = computed(() => JSON.stringify(snapshot(state), null, 2));
-
-// Direct mutation triggers effects
-state.user.name = "Grace Hopper";
-state.user.scores.push(99);
-
-// Scoped CSS with nesting, pseudo-classes, @media
-const card = css\`
-  padding: 20px;
-  border: 2px solid var(--vk-color-border);
-  &:hover { border-color: var(--vk-color-accent); }
-  & > .title { font-weight: 700; }
-  @media (max-width: 600px) { padding: 12px; }
-\`;
-
-// cx() merges class names, skipping falsy values
-const classes = cx(
-  statusBase,
-  statusMap[status()],
-  rounded() && propRounded,
-  shadow() && propShadow,
-);`)}
+      ${code(EXAMPLES_SNIPPET_3)}
     </details>
   </section>`;
 }

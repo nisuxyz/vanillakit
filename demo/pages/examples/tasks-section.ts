@@ -1,7 +1,8 @@
-import { signal, computed, each, html, css } from "../../src/index.js";
-import type { Signal } from "../../src/signal.js";
-import { subtitleClass } from "../styles.ts";
-import { code } from "../highlight.ts";
+import { signal, computed, each, html, css } from "../../../src/index.js";
+import type { Signal } from "../../../src/signal.js";
+import { subtitleClass } from "../../styles.ts";
+import { LiveEditor } from "../../components/LiveEditor.ts";
+import { EXAMPLES_SNIPPET_5 } from "../../snippets.ts";
 
 const todoItemClass = css`
   display: flex;
@@ -73,7 +74,7 @@ interface Todo {
   id: number;
   text: string;
   done: boolean;
-  priority: keyof typeof priorityColors;
+  priority: keyof typeof priorityVariant;
 }
 
 function TodoItem(itemSig: Signal<Todo>) {
@@ -186,46 +187,10 @@ export function TasksSection() {
     </ul>
     <details>
       <summary>View source — signals, computed, each()</summary>
-      ${code(`// Reactive state
-const todos = signal([...]);
-const filter = signal("all");
-const filteredTodos = computed(() => {
-  const f = filter();
-  const l = todos();
-  return f === "active" ? l.filter(t => !t.done)
-       : f === "done"   ? l.filter(t => t.done)
-       : l;
-});
-const stats = computed(() => {
-  const l = todos();
-  return {
-    total: l.length,
-    done: l.filter(t => t.done).length,
-    active: l.filter(t => !t.done).length,
-  };
-});
-
-// Keyed list rendering — DOM nodes reused by id
-html\`<div>
-  \${each(filteredTodos, t => t.id, (itemSig) => TodoItem(itemSig))}
-</div>\`;
-
-// Adding a todo — just push to the signal
-function add() {
-  todos(l => [...l, { id: nextId++, text: text().trim(), done: false, priority: priority() }]);
-}
-
-// TodoItem reads from itemSig — updates when that item changes
-function TodoItem(itemSig) {
-  const todo = itemSig();
-  const toggle = () => todos(l => l.map(t =>
-    t.id === todo.id ? { ...t, done: !t.done } : t
-  ));
-  return html\`<div>
-    <input type="checkbox" checked=\${todo.done} onclick=\${toggle} />
-    <span>\${todo.text}</span>
-  </div>\`;
-}`)}
+      ${LiveEditor({
+        sourceVariants: EXAMPLES_SNIPPET_5,
+        label: "Task app — signals, computed, each()",
+      })}
     </details>
   </section>`;
 }

@@ -1,7 +1,9 @@
-import { signal, each, html, css } from "../../src/index.js";
-import type { Signal, ReadonlySignal } from "../../src/signal.js";
-import { subtitleClass } from "../styles.ts";
-import { code } from "../highlight.ts";
+import { signal, each, html, css } from "../../../src/index.js";
+import type { Signal, ReadonlySignal } from "../../../src/signal.js";
+import { subtitleClass } from "../../styles.ts";
+import { code } from "../../highlight.ts";
+import { EXAMPLES_SNIPPET_4 } from "../../snippets.ts";
+import { LiveEditor } from "../../components/LiveEditor.ts";
 
 const stressItemClass = css`
   display: flex;
@@ -255,30 +257,7 @@ export function StressSection() {
     </div>
     <details>
       <summary>View source — each() keyed reconciliation</summary>
-      ${code(`// each() reuses DOM nodes by key across mutations
-const items = signal(Array.from({ length: 8 }, randItem));
-
-// Render — each item gets a Signal<T> and ReadonlySignal<number>
-html\`<div>
-  \${each(items, item => item.id, (itemSig, indexSig) =>
-    html\`<div>
-      <span>\${() => indexSig()}</span>
-      <span>\${() => itemSig().name}</span>
-      <span>\${() => itemSig().score}</span>
-      <input placeholder="type here…" />
-    </div>\`
-  )}
-</div>\`;
-
-// Mutations — DOM nodes with matching keys are reused, not recreated.
-// Text typed into inputs persists across shuffle/reverse/sort.
-items(shuffle);                              // reorder
-items(l => [...l].reverse());                // reverse
-items(l => [...l, randItem()]);              // append
-items(l => l.filter(x => x.id !== target));  // remove
-items(l => [...l].sort((a, b) =>             // sort
-  a.name.localeCompare(b.name)
-));`)}
+      ${LiveEditor({ sourceVariants: EXAMPLES_SNIPPET_4 })}
     </details>
   </section>`;
 }

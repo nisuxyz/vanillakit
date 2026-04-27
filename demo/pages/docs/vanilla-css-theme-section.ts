@@ -1,5 +1,14 @@
 import { html } from "../../../src";
+import { LiveEditor } from "../../components/LiveEditor";
 import { code } from "../../highlight";
+import {
+  VANILLA_CSS_THEME_SNIPPET_1,
+  VANILLA_CSS_THEME_SNIPPET_2,
+  VANILLA_CSS_THEME_SNIPPET_3,
+  VANILLA_CSS_THEME_SNIPPET_4,
+  VANILLA_CSS_THEME_SNIPPET_5,
+  VANILLA_CSS_THEME_SNIPPET_6,
+} from "../../snippets.js";
 
 export function VanillaCssThemeSection() {
   return html`<section>
@@ -16,17 +25,7 @@ export function VanillaCssThemeSection() {
       No setup required. VanillaCSS detects the OS preference via a media query
       inside <code>@layer vanillacss.tokens</code>:
     </p>
-    ${code(
-      `@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --vk-color-bg:      hsl(var(--vk-gray-9));
-    --vk-color-surface: hsl(var(--vk-gray-8));
-    --vk-color-text:    hsl(var(--vk-gray-0));
-    color-scheme: dark;
-  }
-}`,
-      "css",
-    )}
+    ${code(VANILLA_CSS_THEME_SNIPPET_1, "css")}
 
     <h3>Manual override</h3>
     <p>
@@ -34,19 +33,7 @@ export function VanillaCssThemeSection() {
       <code>&lt;html&gt;</code> or any ancestor element. This overrides the
       system preference.
     </p>
-    ${code(
-      `<!-- Force dark -->
-<html data-theme="dark">
-
-<!-- Force light -->
-<html data-theme="light">
-
-<!-- Scope dark to a specific section -->
-<div data-theme="dark">
-  <article data-card>Always dark card</article>
-</div>`,
-      "markup",
-    )}
+    ${code(VANILLA_CSS_THEME_SNIPPET_2, "markup")}
 
     <h3>themeToggle() — with vanillakit</h3>
     <p>
@@ -55,30 +42,10 @@ export function VanillaCssThemeSection() {
       <code>localStorage</code> on init, falls back to the system preference,
       and persists every user choice.
     </p>
-    ${code(
-      `import { initVanillaCss, themeToggle } from "vanillakit";
-import { html } from "vanillakit";
-
-initVanillaCss();
-
-const { theme, toggle, set } = themeToggle();
-
-// theme()  → "dark" | "light"   (reactive signal)
-// toggle() → switch dark ↔ light, persist to localStorage
-// set()    → explicit control
-
-const btn = html\`
-  <button onclick=\${toggle}>
-    \${() => theme() === "dark" ? "☀️ Switch to light" : "🌙 Switch to dark"}
-  </button>
-\`;
-
-// Explicit control
-set("dark");   // force dark — saved to localStorage
-set("light");  // force light — saved to localStorage
-set("auto");   // follow system — clears localStorage`,
-      "typescript",
-    )}
+    ${LiveEditor({
+      sourceVariants: VANILLA_CSS_THEME_SNIPPET_3,
+      label: "themeToggle() — reactive dark/light toggle",
+    })}
 
     <h3>Customizing the accent color</h3>
     <p>
@@ -87,33 +54,10 @@ set("auto");   // follow system — clears localStorage`,
       Add it to your own stylesheet — unlayered declarations beat
       <code>@layer vanillacss.tokens</code> at equal specificity.
     </p>
-    ${code(
-      `/* styles.css — swap gold accent for indigo */
-:root {
-  --vk-color-accent:     hsl(240 60% 60%);
-  --vk-color-accent-dim: hsl(240 60% 60% / 0.15);
-}`,
-      "css",
-    )}
+    ${code(VANILLA_CSS_THEME_SNIPPET_4, "css")}
 
     <p>For separate light and dark accents:</p>
-    ${code(
-      `/* Light mode accent */
-:root {
-  --vk-color-accent:     hsl(240 60% 55%);
-  --vk-color-accent-dim: hsl(240 60% 55% / 0.12);
-}
-
-/* Dark mode accent */
-[data-theme="dark"],
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --vk-color-accent:     hsl(240 80% 70%);
-    --vk-color-accent-dim: hsl(240 80% 70% / 0.18);
-  }
-}`,
-      "css",
-    )}
+    ${code(VANILLA_CSS_THEME_SNIPPET_5, "css")}
 
     <h3>Config variables</h3>
     <p>
@@ -166,14 +110,6 @@ set("auto");   // follow system — clears localStorage`,
       </tbody>
     </table>
 
-    ${code(
-      `/* Tighten transitions, widen container, adjust rem base */
-:root {
-  --vk-transition-speed: 0.1s;
-  --vk-container-max-width: 80rem;
-  --vk-font-size-root: 112.5%;  /* 18px base → scales all rem values */
-}`,
-      "css",
-    )}
+    ${code(VANILLA_CSS_THEME_SNIPPET_6, "css")}
   </section>`;
 }
