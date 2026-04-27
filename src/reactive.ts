@@ -95,7 +95,10 @@ export function reactive<T extends object>(target: T): T {
                   : a,
               );
               result = (
-                Array.prototype as Record<string, (...a: unknown[]) => unknown>
+                Array.prototype as unknown as Record<
+                  string,
+                  (...a: unknown[]) => unknown
+                >
               )[key].apply(obj, rawArgs);
               _syncArr(obj as unknown[], signals);
             });
@@ -110,7 +113,10 @@ export function reactive<T extends object>(target: T): T {
                 ? (args[0] as Record<symbol, unknown>)[RAW]
                 : args[0];
             return (
-              Array.prototype as Record<string, (...a: unknown[]) => unknown>
+              Array.prototype as unknown as Record<
+                string,
+                (...a: unknown[]) => unknown
+              >
             )[key].apply(obj, [rawArg, ...args.slice(1)]);
           };
         }
