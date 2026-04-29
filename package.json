@@ -7,14 +7,20 @@
     "dev": "vite",
     "build:docs": "vite build",
     "build:lib": "vite build --config vite.config.dist.js",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@happy-dom/global-registrator": "^20.9.0",
     "@types/prismjs": "^1.26.6",
+    "eslint": "^10.2.1",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
     "lightningcss": "^1.32.0",
     "terser": "^5.46.1",
     "typescript": "^5.8.0",
+    "typescript-eslint": "^8.59.1",
     "vite": "^6.3.0",
     "zlib": "^1.0.5"
   },
