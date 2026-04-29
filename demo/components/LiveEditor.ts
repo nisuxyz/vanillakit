@@ -1,15 +1,17 @@
 import * as VanillaKit from "../../src/index.js";
 import {
-  signal,
-  effect,
-  vkml,
-  css,
-  globalCss,
-  cx,
   article,
-  div,
-  header,
   button,
+  css,
+  cx,
+  div,
+  effect,
+  globalCss,
+  header,
+  html,
+  onDispose,
+  signal,
+  vkml,
 } from "../../src/index.js";
 import { CodeJar } from "codejar";
 import { withLineNumbers } from "codejar-linenumbers";
@@ -19,81 +21,26 @@ import { transform } from "sucrase";
 // ── Styles ─────────────────────────────────────────────────
 
 globalCss`
-  :root {
-    --editor-bg: #111118;
-    --editor-text: #d4d4d8;
-    --editor-line-nr: #4a4a5a;
-    --editor-gutter: rgba(255,255,255,0.04);
-  }
-  [data-theme="light"] {
-    --editor-bg: #f5f5f8;
-    --editor-text: #2a2a3e;
-    --editor-line-nr: #a0a0b0;
-    --editor-gutter: rgba(0,0,0,0.04);
-  }
-`;
-
-globalCss`
-  @media (prefers-color-scheme: light) {
-    :root:not([data-theme]) {
-      --editor-bg: #f5f5f8;
-      --editor-text: #2a2a3e;
-      --editor-line-nr: #a0a0b0;
-      --editor-gutter: rgba(0,0,0,0.04);
-    }
-  }
-`;
-
-globalCss`
   /* CodeJar editor overrides */
   .codejar-wrap {
     border-radius: var(--vk-radius-md) var(--vk-radius-md) 0 0;
     border: 1px solid var(--vk-color-border);
-    background: var(--editor-bg);
+    background: var(--vk-color-surface);
   }
   .codejar-wrap:focus-within {
     border-color: var(--vk-color-accent);
   }
   .codejar-linenumbers-inner-wrap {
-    background: var(--editor-bg) !important;
+    background: var(--vk-color-surface) !important;
   }
   .codejar-linenumbers {
-    background-color: var(--editor-gutter) !important;
+    background-color: var(--vk-color-surface-2) !important;
   }
   .codejar-linenumber {
-    color: var(--editor-line-nr) !important;
+    color: var(--vk-color-text-muted) !important;
   }
 `;
 
-const tabsContainerClass = css`
-  display: flex;
-  gap: 0;
-  border-bottom: 1px solid var(--vk-color-border);
-  background: var(--editor-bg);
-  margin: 0;
-  padding: 0;
-`;
-
-const tabButtonClass = css`
-  flex: 0 1 auto;
-  padding: 10px 16px;
-  border: none;
-  background: transparent;
-  color: var(--editor-line-nr);
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-  &:hover {
-    color: var(--editor-text);
-  }
-`;
-
-const tabButtonActiveClass = css`
-  color: var(--vk-color-accent);
-  border-bottom-color: var(--vk-color-accent);
-`;
 
 const editorClass = css`
   display: block;
@@ -102,8 +49,8 @@ const editorClass = css`
   font-family: var(--vk-font-mono);
   font-size: 0.82rem;
   line-height: 1.6;
-  background: var(--editor-bg);
-  color: var(--editor-text);
+  background: var(--vk-color-surface);
+  color: var(--vk-color-text);
   padding: 16px;
   tab-size: 2;
   white-space: pre;
@@ -138,10 +85,7 @@ const backdropVisibleClass = css`
 
 const shellClass = css`
   position: relative;
-  padding: 0;
-  padding-inline: 0;
   margin-bottom: 2rem;
-  overflow: hidden;
 `;
 
 const fullscreenShellClass = css`
@@ -186,14 +130,14 @@ const codePaneClass = css`
   display: flex;
   flex-direction: column;
   min-height: 0;
-  background: var(--editor-bg);
+  background: var(--vk-color-surface);
 `;
 
 const editorsViewportClass = css`
   flex: 1;
   min-height: 0;
   overflow: auto;
-  background: var(--editor-bg);
+  background: var(--vk-color-surface);
 `;
 
 const previewPaneClass = css`
@@ -215,23 +159,6 @@ const previewPaneSplitClass = css`
   }
 `;
 
-const previewHeaderClass = css`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-`;
-
-const previewTitleClass = css`
-  font-family: var(--vk-font-mono);
-  font-size: 0.68rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--vk-color-accent);
-`;
-
 const previewBodyClass = css`
   flex: 1;
   min-height: 0;
@@ -244,8 +171,8 @@ const previewOutputClass = css`
 
 const controlsClass = css`
   position: absolute;
-  right: 18px;
-  bottom: 18px;
+  right: var(--vk-space-xs);
+  top: var(--vk-space-xs);
   z-index: 2;
   display: flex;
   justify-content: flex-end;
@@ -259,15 +186,10 @@ const controlGroupClass = css`
   flex-wrap: wrap;
   padding: 8px;
   border: 1px solid var(--vk-color-border);
-  border-radius: 999px;
-  background: var(--editor-bg);
+  border-radius: var(--vk-radius-full);
+  background: var(--vk-color-surface);
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
   opacity: 0.98;
-`;
-
-const controlButtonClass = css`
-  border-radius: 999px;
-  white-space: nowrap;
 `;
 
 const fullscreenTabPickerClass = css`
@@ -276,19 +198,9 @@ const fullscreenTabPickerClass = css`
   gap: 6px;
 `;
 
-const tabPickerButtonActiveClass = css`
-  background: var(--vk-color-accent);
-  color: white;
-  border-color: var(--vk-color-accent);
-`;
-
 const hiddenPaneClass = css`
   display: none;
 `;
-
-type DisposableElement = HTMLElement & {
-  __v_disposers?: Array<() => void> | null;
-};
 
 // ── Sandbox ────────────────────────────────────────────────
 
@@ -571,8 +483,8 @@ export function LiveEditor({
           );
         },
         {
-          color: "#4a4a5a",
-          backgroundColor: "rgba(255,255,255,0.04)",
+          color: "var(--vk-color-text-muted)",
+          backgroundColor: "var(--vk-color-surface-2)",
         },
       );
 
@@ -740,18 +652,13 @@ export function LiveEditor({
           },
           variantNames.length > 1
             ? div(
-                { class: tabsContainerClass },
+                { role: "tablist" },
                 ...variantNames.map((name) =>
                   vkml.button(
                     {
-                      class: () =>
-                        cx(
-                          tabButtonClass,
-                          mode() === name ? tabButtonActiveClass : undefined,
-                        ),
+                      role: "tab",
+                      "aria-selected": () => mode() === name,
                       onclick: () => switchMode(name),
-                      style:
-                        "border-radius: var(--vk-radius-md) var(--vk-radius-md) 0 0; text-transform: uppercase;",
                     },
                     name,
                   ),
@@ -778,8 +685,8 @@ export function LiveEditor({
               ),
           },
           header(
-            { class: previewHeaderClass },
-            div({ class: previewTitleClass }, "▶ ", label),
+            { style: "gap: 12px; margin-bottom: 14px; border-bottom: none; padding: 0;" },
+            div({ style: "font-family: var(--vk-font-mono); font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--vk-color-accent);" }, "▶ ", label),
             () =>
               modified()
                 ? button(
@@ -816,10 +723,24 @@ export function LiveEditor({
                 button(
                   {
                     "data-style-variant": "outline",
-                    class: controlButtonClass,
+                    style: "border-radius: var(--vk-radius-full); white-space: nowrap;",
                     onclick: toggleFullscreenLayout,
                   },
-                  fullscreenLayout() === "split" ? "Tab view" : "Split view",
+                  // fullscreenLayout() === "split" ? "Toggleable view" : "Split view",
+                  fullscreenLayout() === "split" ?
+                    html`
+                    <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+fill="currentColor" viewBox="0 0 24 24" >
+<!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+<path d="m15.71 14.29-1.42 1.42 3 3L15 21h6v-6l-2.29 2.29zM8.29 9.71l1.42-1.42-3-3L9 3H3v6l2.29-2.29zm9-4.42-3 3 1.42 1.42 3-3L21 9V3h-6zM6.71 18.71l3-3-1.42-1.42-3 3L3 15v6h6z"></path>
+</svg>
+                    `:
+                    html`
+                    <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+fill="currentColor" viewBox="0 0 24 24" >
+<!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+<path d="M20 3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2M4 19V5h7v14zm16 0h-7V5h7z"></path>
+</svg>`
                 ),
                 fullscreenLayout() === "tab"
                   ? div(
@@ -827,56 +748,73 @@ export function LiveEditor({
                       button(
                         {
                           "data-style-variant": "outline",
-                          class: () =>
-                            cx(
-                              controlButtonClass,
-                              fullscreenPanel() === "code"
-                                ? tabPickerButtonActiveClass
-                                : undefined,
-                            ),
+                          "data-color-variant": () =>
+                            fullscreenPanel() === "code" ? "primary" : undefined,
+                          style: "border-radius: var(--vk-radius-full); white-space: nowrap;",
                           onclick: () => fullscreenPanel("code"),
                         },
-                        "Code",
+                        // "Code",
+                        html`<svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+fill="currentColor" viewBox="0 0 24 24" >
+<!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+<path d="M9.71 16.29 5.41 12l4.3-4.29-1.42-1.42L2.59 12l5.7 5.71zm6 1.42 5.7-5.71-5.7-5.71-1.42 1.42 4.3 4.29-4.3 4.29z"></path>
+</svg>`
                       ),
                       button(
                         {
                           "data-style-variant": "outline",
-                          class: () =>
-                            cx(
-                              controlButtonClass,
-                              fullscreenPanel() === "preview"
-                                ? tabPickerButtonActiveClass
-                                : undefined,
-                            ),
+                          "data-color-variant": () =>
+                            fullscreenPanel() === "preview" ? "primary" : undefined,
+                          style: "border-radius: var(--vk-radius-full); white-space: nowrap;",
                           onclick: () => fullscreenPanel("preview"),
                         },
-                        "Preview",
+                        // "Preview",
+                        html`<svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+fill="currentColor" viewBox="0 0 24 24" >
+<!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+<path d="M12 9a3 3 0 1 0 0 6 3 3 0 1 0 0-6"></path><path d="M12 19c7.63 0 9.93-6.62 9.95-6.68.07-.21.07-.43 0-.63-.02-.07-2.32-6.68-9.95-6.68s-9.93 6.61-9.95 6.67c-.07.21-.07.43 0 .63.02.07 2.32 6.68 9.95 6.68Zm0-12c5.35 0 7.42 3.85 7.93 5-.5 1.16-2.58 5-7.93 5s-7.42-3.84-7.93-5c.5-1.16 2.58-5 7.93-5"></path>
+</svg>`
                       ),
                     )
                   : null,
                 button(
                   {
                     "data-style-variant": "outline",
-                    class: controlButtonClass,
+                    "data-hover": "scale",
+                    style: "border-radius: var(--vk-radius-full); white-space: nowrap;",
                     onclick: minimize,
                   },
-                  "Minimize",
+                  // "Minimize",
+                  html`
+<svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+fill="currentColor" viewBox="0 0 24 24">
+<!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+<path d="M10 4H8v4H4v2h6zm0 16v-6H4v2h4v4zm6-4h4v-2h-6v6h2zm4-8h-4V4h-2v6h6z"></path>
+</svg>
+                  `
                 ),
               ]
             : button(
                 {
                   "data-style-variant": "outline",
-                  class: controlButtonClass,
+                  style: "border-radius: var(--vk-radius-full); white-space: nowrap;",
                   onclick: maximize,
                 },
-                "Full screen",
+                // "Full screen",
+                html`
+<svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+fill="currentColor" viewBox="0 0 24 24" style="animation: vk-pulse 1s infinite;">
+<!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+<path d="M10 3H3v7h2V5h5zm0 16H5v-5H3v7h7zm11-5h-2v5h-5v2h7zm0-11h-7v2h5v5h2z"></path>
+</svg>
+                `
               ),
         ),
       ),
     ),
-  ) as DisposableElement;
+  );
 
-  root.__v_disposers = [...(root.__v_disposers ?? []), ...manualDisposers];
+  for (const fn of manualDisposers) onDispose(root, fn);
 
   return root;
 }
