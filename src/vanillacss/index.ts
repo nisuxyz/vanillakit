@@ -1,5 +1,6 @@
-import { signal, effect } from "../index.js";
-import type { Signal } from "../index.js";
+import { effect,signal } from "../index.js";
+import type { ThemeToggle } from "./types.js";
+export type { SidebarGroup,Tab, ThemeToggle } from "./types.js";
 
 import "./vanilla.css";
 
@@ -11,12 +12,6 @@ export function initVanillaCss(): void {
 }
 
 const STORAGE_KEY = "vanillacss-theme";
-
-interface ThemeToggle {
-  theme: Signal<string>;
-  toggle(): void;
-  set(value: "dark" | "light" | "auto"): void;
-}
 
 export function themeToggle(): ThemeToggle {
   const stored = localStorage.getItem(STORAGE_KEY);

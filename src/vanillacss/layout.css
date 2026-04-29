@@ -38,7 +38,7 @@
 
   /* Article — minimal rhythm only */
   article>*+* {
-    margin-top: var(--vk-space-sm);
+    margin-top: var(--vk-space-md);
   }
 
   /* Card (article[data-card]) */
@@ -46,6 +46,9 @@
     background: var(--vk-color-surface);
     border: 1px solid var(--vk-color-border);
     border-radius: var(--vk-radius-md);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     overflow: hidden;
     transition: all var(--vk-transition-speed) var(--vk-ease-default);
   }
@@ -57,7 +60,8 @@
   }
 
   article[data-card]>footer {
-    padding: var(--vk-space-md) var(--vk-space-lg);
+    margin-top: auto;
+    padding: var(--vk-space-sm) var(--vk-space-lg);
     border-top: 1px solid var(--vk-color-border);
     color: var(--vk-color-text-muted);
     text-align: left;
@@ -161,6 +165,39 @@
       border-bottom: 1px solid var(--vk-color-border);
       padding-bottom: var(--vk-space-md);
       margin-bottom: var(--vk-space-sm);
+    }
+  }
+
+  /* App-shell layout: fixed sidebar + scrollable main, fills parent height */
+  [data-layout="app-shell"] {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  [data-layout="app-shell"] > aside {
+    width: var(--vk-sidebar-app-width, 220px);
+    flex-shrink: 0;
+    overflow-y: auto;
+    border-right: 1px solid var(--vk-color-border);
+    font-size: var(--vk-font-size-sm);
+  }
+
+  [data-layout="app-shell"] > :not(aside) {
+    flex: 1;
+    overflow-y: auto;
+    min-width: 0;
+  }
+
+  @media (max-width: 48rem) {
+    [data-layout="app-shell"] {
+      flex-direction: column;
+    }
+
+    [data-layout="app-shell"] > aside {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid var(--vk-color-border);
     }
   }
 
