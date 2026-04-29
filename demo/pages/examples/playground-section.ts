@@ -1,15 +1,15 @@
 import {
-  signal,
   computed,
-  reactive,
-  snapshot,
-  html,
   css,
   cx,
+  html,
+  reactive,
+  signal,
+  snapshot,
 } from "../../../src/index.js";
-import { subtitleClass } from "../../styles.ts";
 import { code } from "../../highlight.ts";
 import { EXAMPLES_SNIPPET_3 } from "../../snippets.ts";
+import { subtitleClass } from "../../styles.ts";
 
 const codeBlock = css`
   font-family: var(--vk-font-mono);

@@ -1,12 +1,11 @@
 import { html } from "../../../src";
 import { LiveEditor } from "../../components/LiveEditor";
-import { code } from "../../highlight";
 import {
   COUNTER,
-  PROPS,
-  SIGNAL_PROPS,
   DIRECT_CHILDREN,
+  PROPS,
   PROPS_CHILDREN,
+  SIGNAL_PROPS,
 } from "../../snippets";
 
 // ── Concept sections ───────────────────────────────────────

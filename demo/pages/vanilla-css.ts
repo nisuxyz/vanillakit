@@ -1,22 +1,18 @@
+import type { SidebarGroup } from "../../src/index.js";
 import { signal, vkml } from "../../src/index.js";
 import {
-  subtitleClass,
   sidebarGroupClass,
   sidebarLinkClass,
+  subtitleClass,
 } from "../styles.ts";
+import { VanillaCssComponentsSection } from "./docs/vanilla-css-components-section.ts";
 import { VanillaCssSection } from "./docs/vanilla-css-section.ts";
 import { VanillaCssThemeSection } from "./docs/vanilla-css-theme-section.ts";
-import { VanillaCssComponentsSection } from "./docs/vanilla-css-components-section.ts";
 import { VanillaCssTokensSection } from "./docs/vanilla-css-tokens-section.ts";
 
 type SectionId = "overview" | "theming" | "components" | "tokens";
 
-interface SidebarGroup {
-  label: string;
-  items: { id: SectionId; label: string }[];
-}
-
-const sidebarGroups: SidebarGroup[] = [
+const sidebarGroups: SidebarGroup<SectionId>[] = [
   {
     label: "VanillaCSS",
     items: [

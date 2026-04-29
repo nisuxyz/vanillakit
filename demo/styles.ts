@@ -1,4 +1,4 @@
-import { css, globalCss, initVanillaCss } from "../src/index.js";
+import { css, initVanillaCss } from "../src/index.js";
 
 // Initialize vanillacss (tokens, reset, base, forms, components, utilities, animations)
 initVanillaCss();

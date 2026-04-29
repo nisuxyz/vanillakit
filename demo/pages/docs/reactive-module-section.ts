@@ -1,6 +1,5 @@
 import { html } from "../../../src";
 import { LiveEditor } from "../../components/LiveEditor";
-import { code } from "../../highlight";
 import { EXAMPLES_SNIPPET_1 } from "../../snippets";
 
 export function ReactiveModuleSection() {

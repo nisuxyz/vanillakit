@@ -1,4 +1,4 @@
-import { vkml, css } from "../../src/index.js";
+import { css,vkml } from "../../src/index.js";
 import { subtitleClass } from "../styles.ts";
 
 const moduleIcon = css`

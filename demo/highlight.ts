@@ -1,4 +1,3 @@
-import Prism from "prismjs";
 import "prismjs/components/prism-markup";
 import "prismjs/components/prism-css";
 import "prismjs/components/prism-css-extras";
@@ -7,8 +6,10 @@ import "prismjs/components/prism-js-templates";
 import "prismjs/components/prism-typescript";
 import "prismjs/components/prism-bash";
 import "prismjs/components/prism-python";
+
 import { globalCss } from "../src/index.js";
 import { sourceBlock } from "./styles.ts";
+import Prism from "prismjs";
 
 // Prism theme — uses CSS custom properties for theme-awareness
 globalCss`

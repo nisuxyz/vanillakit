@@ -1,9 +1,8 @@
-import { signal, each, html, css } from "../../../src/index.js";
-import type { Signal, ReadonlySignal } from "../../../src/signal.js";
-import { subtitleClass } from "../../styles.ts";
-import { code } from "../../highlight.ts";
-import { EXAMPLES_SNIPPET_4 } from "../../snippets.ts";
+import { css,Each, html, signal } from "../../../src/index.js";
+import type { ReadonlySignal,Signal } from "../../../src/signal.js";
 import { LiveEditor } from "../../components/LiveEditor.ts";
+import { EXAMPLES_SNIPPET_4 } from "../../snippets.ts";
+import { subtitleClass } from "../../styles.ts";
 
 const stressItemClass = css`
   display: flex;
@@ -241,7 +240,7 @@ export function StressSection() {
     </div>
 
     <ul style="list-style:none;padding:0;margin-bottom:24px;">
-      ${each(stressItems, (item) => item.id, StressItem)}
+      ${Each({ list: stressItems, key: (item) => item.id, render: StressItem })}
       ${() =>
         stressItems().length === 0
           ? html`<div data-empty>List is empty. Add some items!</div>`

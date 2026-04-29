@@ -1,18 +1,18 @@
-import { signal, html, css, keyframes, effect } from "../../src/index.js";
+import { css, effect,html, keyframes, signal } from "../../src/index.js";
 import { LiveEditor } from "../components/LiveEditor.ts";
 import { code } from "../highlight.ts";
 import {
-  HTMX_PARTIAL,
-  HTMX_SETUP,
-  HTMX_ISLANDS,
-  TAILWIND_DIRECT,
-  TAILWIND_MIX,
-  TAILWIND_CONFIG,
-  HONO_SERVER,
-  HONO_FETCH,
-  FASTAPI_LAYOUT,
   FASTAPI_BACKEND,
   FASTAPI_FETCH,
+  FASTAPI_LAYOUT,
+  HONO_FETCH,
+  HONO_SERVER,
+  HTMX_ISLANDS,
+  HTMX_PARTIAL,
+  HTMX_SETUP,
+  TAILWIND_CONFIG,
+  TAILWIND_DIRECT,
+  TAILWIND_MIX,
 } from "../snippets.ts";
 
 // ── htmx interactive demo ───────────────────────────────────
@@ -371,7 +371,7 @@ export function TailwindSection() {
       </p>
       ${LiveEditor({
         sourceVariants: TAILWIND_MIX,
-        label: "Mixing Tailwind + css\`\` scoped styles",
+        label: "Mixing Tailwind + css`` scoped styles",
       })}
 
       <h3>Tailwind config</h3>

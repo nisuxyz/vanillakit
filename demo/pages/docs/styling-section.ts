@@ -2,12 +2,12 @@ import { html } from "../../../src";
 import { LiveEditor } from "../../components/LiveEditor";
 import { code } from "../../highlight";
 import {
-  STYLING_SNIPPET_1,
-  STYLING_SNIPPET_2,
-  STYLING_SNIPPET_3,
   STYLING_LIVE_1,
   STYLING_LIVE_2,
   STYLING_LIVE_3,
+  STYLING_SNIPPET_1,
+  STYLING_SNIPPET_2,
+  STYLING_SNIPPET_3,
 } from "../../snippets.js";
 
 export function StylingSection() {

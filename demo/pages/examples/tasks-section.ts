@@ -1,8 +1,8 @@
-import { signal, computed, each, html, css } from "../../../src/index.js";
+import { computed, css,Each, html, signal } from "../../../src/index.js";
 import type { Signal } from "../../../src/signal.js";
-import { subtitleClass } from "../../styles.ts";
 import { LiveEditor } from "../../components/LiveEditor.ts";
 import { EXAMPLES_SNIPPET_5 } from "../../snippets.ts";
+import { subtitleClass } from "../../styles.ts";
 
 const todoItemClass = css`
   display: flex;
@@ -175,10 +175,8 @@ export function TasksSection() {
     </div>
     ${AddTodo()} ${FilterBar()}
     <ul style="list-style:none;padding:0;">
-      ${each(
-        filteredTodos,
-        (t) => t.id,
-        (itemSig) => TodoItem(itemSig),
+      ${Each({ list: filteredTodos, key: (t) => t.id },
+        TodoItem
       )}
       ${() =>
         filteredTodos().length === 0

@@ -1,7 +1,7 @@
 import { html } from "../../../src";
 import { LiveEditor } from "../../components/LiveEditor";
 import { code } from "../../highlight";
-import { LISTS_SNIPPET_1, LISTS_LIVE_SNIPPET } from "../../snippets";
+import { LISTS_LIVE_SNIPPET,LISTS_SNIPPET_1 } from "../../snippets";
 
 export function ListsSection() {
   return html`<section>

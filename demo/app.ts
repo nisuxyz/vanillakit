@@ -1,18 +1,21 @@
 import {
-  html,
-  css,
-  initRouter,
+  computed,
   createRouter,
-  navLink,
+  css,
+  currentPath,
+  html,
+  initRouter,
   navigate,
+  navLink,
   themeToggle,
 } from "../src/index.ts";
-import { logoClass } from "./styles.ts";
-import { HomePage } from "./pages/home.ts";
-import { ExamplesPage } from "./pages/examples.ts";
 import { AboutPage } from "./pages/about.ts";
 import { DocsPage } from "./pages/docs/index.ts";
+import { ExamplesLayout } from "./pages/examples.ts";
+import { HomePage } from "./pages/home.ts";
 import { VanillaCssPage } from "./pages/vanilla-css.ts";
+import { logoClass } from "./styles.ts";
+export { initStyleAttrs } from '../src/vss.ts';
 
 initRouter({
   mode: "history",
@@ -41,7 +44,6 @@ const themeToggleBtn = css`
 
 const RouterView = createRouter({
   "/": HomePage,
-  "/examples": ExamplesPage,
   "/docs": DocsPage,
   "/vanillacss": VanillaCssPage,
   "/about": AboutPage,
@@ -52,9 +54,11 @@ const RouterView = createRouter({
     </div>`,
 });
 
+const onExamples = computed(() => currentPath().startsWith("/examples"));
+
 export function App() {
   return html`
-    <header>
+    <header class="container">
       <a
         class=${logoClass}
         href="/"
@@ -75,10 +79,13 @@ export function App() {
         </button>
       </div>
     </header>
-    <main>${RouterView()}</main>
-    <footer>
-      Built with <span class="text-accent">vanillakit</span> — zero deps, ~760
-      lines of JS
-    </footer>
+    ${() =>
+      onExamples()
+        ? ExamplesLayout()
+        : html`<main>${RouterView()}</main>
+            <footer class="container">
+              Built with <span class="text-accent">vanillakit</span> — zero
+              deps, ~760 lines of JS
+            </footer>`}
   `;
 }

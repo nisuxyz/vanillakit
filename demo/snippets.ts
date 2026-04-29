@@ -35,6 +35,23 @@ const Counter = (props: CounterProps = { initial: 0 }): VanillaElement => {
 
 document.body.append(Counter({ initial: 10 }));
 `,
+  "html+vkml": `
+import { signal, html, div, type VanillaElement } from "vanillakit";
+
+interface CounterProps {
+  initial: number;
+}
+
+const Counter = (props: CounterProps = { initial: 0 }): VanillaElement => {
+  const count = signal(props.initial);
+  return div({ style: "display: flex; flex-direction: column; gap: 1rem;" },
+    () => "Count: " + count(),
+    html\`<button onclick=\${() => count(n => n + 1)}>+1</button>\`
+  );
+};
+
+document.body.append(Counter({ initial: 10 }));
+`,
 };
 
 export const PROPS = {

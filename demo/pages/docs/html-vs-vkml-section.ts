@@ -60,7 +60,7 @@ document.body.append(el);`,
       "Both snippets below produce identical output. Use the tabs to switch.",
     ),
     LiveEditor({
-      sourceVariants: { html: COUNTER.html, vkml: COUNTER.vkml },
+      sourceVariants: COUNTER,
       label: "Counter — html vs vkml",
     }),
 

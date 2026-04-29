@@ -1,11 +1,10 @@
 import { html } from "../../../src";
 import { LiveEditor } from "../../components/LiveEditor";
-import { code } from "../../highlight";
 import {
-  FORMS_SNIPPET_1,
-  FORMS_TEXT_SNIPPET,
   FORMS_CHECKBOX_SNIPPET,
   FORMS_SELECT_SNIPPET,
+  FORMS_SNIPPET_1,
+  FORMS_TEXT_SNIPPET,
 } from "../../snippets";
 
 export function FormsSection() {

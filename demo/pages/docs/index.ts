@@ -1,27 +1,28 @@
+import type { SidebarGroup } from "../../../src/index.js";
 import { signal, vkml } from "../../../src/index.js";
 import {
-  subtitleClass,
   sidebarGroupClass,
   sidebarLinkClass,
+  subtitleClass,
 } from "../../styles.ts";
-import { HonoSection, FastAPISection } from "../integrations.ts";
-import { HtmlVsVkmlSection } from "./html-vs-vkml-section.ts";
-import { VkmlModuleSection } from "./vkml-module-section.ts";
-import { GettingStartedSection } from "./getting-started-section.ts";
-import { TypeScriptSection } from "./type-script-section.ts";
+import { FastAPISection,HonoSection } from "../integrations.ts";
 import { ComponentsSection } from "./components-section.ts";
-import { ReactivitySection } from "./reactivity-section.ts";
-import { DataFetchingSection } from "./data-fetching-section.ts";
 import { ConditionalSection } from "./conditional-section.ts";
-import { ListsSection } from "./lists-section.ts";
+import { CssModuleSection } from "./css-module-section.ts";
+import { DataFetchingSection } from "./data-fetching-section.ts";
 import { FormsSection } from "./forms-section.ts";
-import { StylingSection } from "./styling-section.ts";
+import { GettingStartedSection } from "./getting-started-section.ts";
+import { HtmlModuleSection } from "./html-module-section.ts";
+import { HtmlVsVkmlSection } from "./html-vs-vkml-section.ts";
+import { ListsSection } from "./lists-section.ts";
+import { ReactiveModuleSection } from "./reactive-module-section.ts";
+import { ReactivitySection } from "./reactivity-section.ts";
+import { RouterModuleSection } from "./router-module-section.ts";
 import { RoutingConceptsSection } from "./routing-concepts-section.ts";
 import { SignalSection } from "./signal-section.ts";
-import { ReactiveModuleSection } from "./reactive-module-section.ts";
-import { HtmlModuleSection } from "./html-module-section.ts";
-import { CssModuleSection } from "./css-module-section.ts";
-import { RouterModuleSection } from "./router-module-section.ts";
+import { StylingSection } from "./styling-section.ts";
+import { TypeScriptSection } from "./type-script-section.ts";
+import { VkmlModuleSection } from "./vkml-module-section.ts";
 
 // ── Section definitions ────────────────────────────────────
 type SectionId =
@@ -45,12 +46,7 @@ type SectionId =
   | "css-module"
   | "router";
 
-interface SidebarGroup {
-  label: string;
-  items: { id: SectionId; label: string }[];
-}
-
-const sidebarGroups: SidebarGroup[] = [
+const sidebarGroups: SidebarGroup<SectionId>[] = [
   {
     label: "Guide",
     items: [

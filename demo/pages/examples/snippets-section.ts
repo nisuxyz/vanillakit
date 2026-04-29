@@ -1,12 +1,11 @@
 import { vkml } from "../../../src/index.js";
-import { code } from "../../highlight.ts";
 import { LiveEditor } from "../../components/LiveEditor.ts";
 import {
   COUNTER,
-  TWO_WAY_BINDING,
   DERIVED_STATE,
   EXAMPLES_SNIPPET_1,
   EXAMPLES_SNIPPET_2,
+  TWO_WAY_BINDING,
 } from "../../snippets.ts";
 
 export function SnippetsSection() {

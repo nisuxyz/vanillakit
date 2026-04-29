@@ -2,13 +2,13 @@ import { html } from "../../../src";
 import { LiveEditor } from "../../components/LiveEditor";
 import { code } from "../../highlight";
 import {
-  SIGNAL_SNIPPET_4,
-  REACTIVITY_SNIPPET_1,
-  REACTIVITY_SNIPPET_2,
   EXAMPLES_SNIPPET_1,
   REACTIVITY_LIVE_1,
   REACTIVITY_LIVE_2,
   REACTIVITY_LIVE_3,
+  REACTIVITY_SNIPPET_1,
+  REACTIVITY_SNIPPET_2,
+  SIGNAL_SNIPPET_4,
 } from "../../snippets";
 
 export function ReactivitySection() {
