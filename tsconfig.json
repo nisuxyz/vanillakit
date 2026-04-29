@@ -11,10 +11,24 @@
       "ESNext",
       "DOM",
       "DOM.Iterable"
-    ]
+    ],
+    "paths": {
+      "@vanillakit/signal": ["./packages/@vanillakit/signal/src/index.ts"],
+      "@vanillakit/types": ["./packages/@vanillakit/types/src/index.ts"],
+      "@vanillakit/reactive": ["./packages/@vanillakit/reactive/src/index.ts"],
+      "@vanillakit/css": ["./packages/@vanillakit/css/src/index.ts"],
+      "@vanillakit/vss": ["./packages/@vanillakit/vss/src/index.ts"],
+      "@vanillakit/html": ["./packages/@vanillakit/html/src/index.ts"],
+      "@vanillakit/vkml": ["./packages/@vanillakit/vkml/src/index.ts"],
+      "@vanillakit/router": ["./packages/@vanillakit/router/src/index.ts"],
+      "@vanillakit/vanillacss": ["./packages/@vanillakit/vanillacss/src/index.ts"],
+      "@vanillakit/vanillakit": ["./packages/@vanillakit/vanillakit/src/index.ts"],
+      "@vanillakit/ui": ["./packages/@vanillakit/ui/src/index.ts"]
+    }
   },
   "include": [
     "src/**/*.ts",
-    "demo/**/*.ts"
+    "demo/**/*.ts",
+    "packages/**/*.ts"
   ]
 }

@@ -3,11 +3,16 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "packages/@vanillakit/*",
+    "packages/demo"
+  ],
   "scripts": {
     "dev": "vite",
     "build:docs": "vite build",
     "build:lib": "vite build --config vite.config.dist.js",
     "check": "tsc --noEmit",
+    "test": "bun test",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },

@@ -1,0 +1,13 @@
+{
+  "name": "@vanillakit/demo",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@vanillakit/vanillakit": "workspace:*",
+    "@vanillakit/vanillacss": "workspace:*",
+    "@vanillakit/signal": "workspace:*",
+    "@vanillakit/vss": "workspace:*"
+  },
+  "license": "MIT"
+}

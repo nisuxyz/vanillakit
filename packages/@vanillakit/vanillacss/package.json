@@ -1,0 +1,20 @@
+{
+  "name": "@vanillakit/vanillacss",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    }
+  },
+  "files": [
+    "src"
+  ],
+  "dependencies": {
+    "@vanillakit/signal": "workspace:*"
+  },
+  "license": "MIT"
+}

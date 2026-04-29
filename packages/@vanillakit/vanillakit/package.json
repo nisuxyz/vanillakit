@@ -1,0 +1,27 @@
+{
+  "name": "@vanillakit/vanillakit",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    }
+  },
+  "files": [
+    "src"
+  ],
+  "dependencies": {
+    "@vanillakit/css": "workspace:*",
+    "@vanillakit/html": "workspace:*",
+    "@vanillakit/reactive": "workspace:*",
+    "@vanillakit/router": "workspace:*",
+    "@vanillakit/signal": "workspace:*",
+    "@vanillakit/types": "workspace:*",
+    "@vanillakit/vkml": "workspace:*",
+    "@vanillakit/vss": "workspace:*"
+  },
+  "license": "MIT"
+}
