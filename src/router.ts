@@ -1,5 +1,6 @@
-import { signal, effect } from "./signal.js";
 import type { Signal } from "./signal.js";
+import { effect,signal } from "./signal.js";
+import type { DisposableNode } from "./types.js";
 
 let _mode: "hash" | "history" = "hash";
 let _base: string = "";
@@ -17,9 +18,26 @@ function _onPopState() {
   currentPath(window.location.pathname.slice(_base.length) || "/");
 }
 
+function _disposeNodeTree(node: Node): void {
+  const disposableNode = node as DisposableNode;
+
+  if (disposableNode.__v_dispose) {
+    disposableNode.__v_dispose();
+  } else if (disposableNode.__v_disposers) {
+    for (const dispose of disposableNode.__v_disposers) dispose();
+    disposableNode.__v_disposers = null;
+  }
+
+  for (const child of Array.from(node.childNodes)) {
+    _disposeNodeTree(child);
+  }
+}
+
 window.addEventListener("hashchange", _onHashChange);
 
-export function initRouter(config: { mode?: "hash" | "history"; base?: string } = {}): void {
+export function initRouter(
+  config: { mode?: "hash" | "history"; base?: string } = {},
+): void {
   const mode = config.mode ?? "hash";
   _base = (config.base ?? "").replace(/\/$/, "").replace(/^\/$/, "");
 
@@ -88,7 +106,10 @@ export function createRouter(
         }
       }
       routeParams(match ? match.params : {});
-      container.innerHTML = "";
+      for (const child of Array.from(container.childNodes)) {
+        _disposeNodeTree(child);
+      }
+      container.replaceChildren();
       if (match) {
         const r = match.handler();
         if (r instanceof Node) container.append(r);

@@ -1,20 +1,10 @@
-import { signal, effect, untrack } from "./signal.js";
-import type { Signal, ReadonlySignal } from "./signal.js";
+import type { ReadonlySignal,Signal } from "./signal.js";
+import { effect, signal, untrack } from "./signal.js";
+import type { EachDescriptor, EachEntry,VanillaNode } from "./types.js";
+export type { EachDescriptor } from "./types.js";
 
 let uid = 0;
 const MARKER_ATTR = "data-v-";
-
-type VanillaNode = Node & {
-  __v_dispose?: () => void;
-  __v_disposers?: Array<() => void> | null;
-};
-
-export interface EachDescriptor<T> {
-  __v_each: true;
-  listFn: () => T[];
-  keyFn: (item: T, index: number) => unknown;
-  renderFn: (item: Signal<T>, index: ReadonlySignal<number>) => Node;
-}
 
 export function html(
   strings: TemplateStringsArray,
@@ -211,20 +201,12 @@ function _disposeTree(node: Node): void {
 
 // ---- each() — Keyed list reconciliation ----
 
-export function each<T>(
-  listFn: () => T[],
-  keyFn: (item: T, index: number) => unknown,
-  renderFn: (item: Signal<T>, index: ReadonlySignal<number>) => Node,
+export function Each<T>(
+{ list, key }: { list: () => T[]; key: (item: T, index: number) => unknown; },
+render: (item: Signal<T>, index: ReadonlySignal<number>) => Node,
 ): EachDescriptor<T> {
-  return { __v_each: true, listFn, keyFn, renderFn };
+  return { __v_each: true, listFn: list, keyFn: key, renderFn: render };
 }
-
-type EachEntry<T> = {
-  nodes: Node[];
-  disposers: Array<() => void>;
-  itemSig: Signal<T>;
-  indexSig: Signal<number>;
-};
 
 function _mountEach<T>(
   anchor: Comment,

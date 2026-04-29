@@ -1,5 +1,5 @@
-import { signal, batch } from "./signal.js";
 import type { Signal } from "./signal.js";
+import { batch,signal } from "./signal.js";
 
 const REACTIVE: unique symbol = Symbol("reactive");
 const RAW: unique symbol = Symbol("raw");

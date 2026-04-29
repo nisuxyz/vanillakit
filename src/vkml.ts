@@ -1,17 +1,7 @@
-import { effect, untrack, signal } from "./signal.js";
-import type { Signal, ReadonlySignal } from "./signal.js";
-
-type VanillaNode = Node & {
-  __v_dispose?: () => void;
-  __v_disposers?: Array<() => void> | null;
-};
-
-export interface EachDescriptor<T> {
-  __v_each: true;
-  listFn: () => T[];
-  keyFn: (item: T, index: number) => unknown;
-  renderFn: (item: Signal<T>, index: ReadonlySignal<number>) => Node;
-}
+import type { ReadonlySignal,Signal } from "./signal.js";
+import { effect, signal, untrack } from "./signal.js";
+import type { EachDescriptor, EachEntry, VanillaNode } from "./types.js";
+export type { EachDescriptor } from "./types.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 const SVG_TAGS = new Set([
@@ -157,13 +147,6 @@ function _reconcile(
   if (node) parent.insertBefore(node, anchor);
   return node;
 }
-
-type EachEntry<T> = {
-  nodes: Node[];
-  disposers: Array<() => void>;
-  itemSig: Signal<T>;
-  indexSig: Signal<number>;
-};
 
 function _mountEach<T>(
   anchor: Comment,
@@ -330,6 +313,11 @@ export const vkml: Record<string, VkmlBuilder> = new Proxy({} as any, {
     };
   },
 });
+
+export function onDispose(el: Element, fn: () => void): void {
+  const vNode = el as VanillaNode;
+  (vNode.__v_disposers ??= []).push(fn);
+}
 
 export const {
   a,
